@@ -1,0 +1,27 @@
+doctype html
+html
+    head   
+        title #{title}
+
+        //- Nhúng link boostrap4
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+        //- Nhúng link css
+        link(rel="stylesheet", href="/admin/css/style.css")
+    body   
+
+        include ../partials/header.pug
+
+        .body 
+            include ../partials/sider.pug
+            .main 
+             block main
+
+
+        //- Nhúng link bootstrap js
+    script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js") 
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js") 
+
+        //- Nhúng file js
+    script(src="/admin/js/product.js")
+    script(src="/admin/js/script.js")
+    
