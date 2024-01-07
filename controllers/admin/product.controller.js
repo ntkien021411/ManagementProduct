@@ -146,6 +146,7 @@ module.exports.createItem = async (req, res) => {
   if (req.file) {
     req.body.thumbnail = `/uploads/${req.file.filename}`;
   }
+  // console.log(req.file);
   //Tạo mới và lưu 1 sản phẩm vào db
   const product = new Product(req.body);
   await product.save();
