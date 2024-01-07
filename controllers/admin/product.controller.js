@@ -143,10 +143,7 @@ module.exports.createItem = async (req, res) => {
   } else {
     req.body.position = parseInt(res.body.position);
   }
-  if (req.file) {
-    req.body.thumbnail = `/uploads/${req.file.filename}`;
-  }
-  // console.log(req.file);
+  // console.log(req.body);
   //Tạo mới và lưu 1 sản phẩm vào db
   const product = new Product(req.body);
   await product.save();
