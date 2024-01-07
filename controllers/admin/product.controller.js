@@ -13,13 +13,13 @@ module.exports.index = async (req, res) => {
     deleted: false,
   };
 
-  //BỘ LỌC
+  //BỘ LỌC TRẠNG THÁI SẢN PHẨM
   //http://localhost:3000/admin/products?keyword=Iphone
   if (req.query.status) {
     find.status = req.query.status;
   }
 
-  //TÌM KIẾM
+  //TÌM KIẾM SẢN PHẨM THEO TITLE
   let objectSearch = searchHelper(req.query);
   if (objectSearch.regex) {
     find.title = objectSearch.regex;
@@ -37,9 +37,18 @@ module.exports.index = async (req, res) => {
     countProducts
   );
 
-  // find với Aggregation Operations
+  //SẮP XẾP SẢN PHẨM
+  let sort = {};
+  if (req.query.sortKey && req.query.sortValue) {
+    sort[req.query.sortKey] = req.query.sortValue;
+    // console.log(sort);
+  }else{
+    sort.position = "asc";
+  }
+  console.log(find);
+  console.log(sort);
   const products = await Product.find(find)
-    .sort({ position: "asc" })
+    .sort(sort)
     .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
     .skip(objectPagination.skip); //Bỏ qua bnh sản phẩm để bắt đầu lấy limit
 
@@ -132,7 +141,6 @@ module.exports.createPage = async (req, res) => {
 };
 // [POST] /admin/products/create
 module.exports.createItem = async (req, res) => {
-
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
@@ -158,13 +166,13 @@ module.exports.edit = async (req, res) => {
   try {
     let find = {
       deleted: false,
-      _id:req.params.id
+      _id: req.params.id,
     };
-  
+
     const product = await Product.findOne(find);
     res.render("admin/pages/products/edit", {
       title: "Chỉnh sửa sản phẩm",
-      product : product
+      product: product,
     });
   } catch (error) {
     res.redirect(`${systemConfig.prefixAdmin}/products`);
@@ -173,15 +181,18 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/products/edit:id
 module.exports.editPatch = async (req, res) => {
-  const id=req.params.id;
+  const id = req.params.id;
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
 
   try {
-    await Product.updateOne({
-        _id : id
-    },req.body)
+    await Product.updateOne(
+      {
+        _id: id,
+      },
+      req.body
+    );
     req.flash("success", `Cập nhật sản phẩm thành công!`);
   } catch (error) {
     req.flash("error", `Cập nhật thất bại!`);
@@ -190,18 +201,18 @@ module.exports.editPatch = async (req, res) => {
   res.redirect(`back`);
 };
 
-// [GET] /admin/products/edit:id
+// [GET] /admin/products/detail:id
 module.exports.detail = async (req, res) => {
   try {
     let find = {
       deleted: false,
-      _id:req.params.id
+      _id: req.params.id,
     };
-  
+
     const product = await Product.findOne(find);
     res.render("admin/pages/products/detail", {
       title: product.title,
-      product : product
+      product: product,
     });
   } catch (error) {
     res.redirect(`${systemConfig.prefixAdmin}/products`);
