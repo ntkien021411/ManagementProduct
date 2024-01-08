@@ -23,9 +23,17 @@ block main
         div(class="form-group")
             label(for="desc") Mô tả
             textarea(
-                class="form-control"
+                class="form-control textarea-mce"
                 id="desc"
                 name="description"
+                row="5"
+            )
+        div(class="form-group")
+            label(for="content") Nội dung
+            textarea(
+                class="form-control textarea-mce"
+                id="content"
+                name="content"
                 row="5"
             )
         div(class="form-group")

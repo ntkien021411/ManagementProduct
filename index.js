@@ -41,6 +41,14 @@ app.set("view engine", "pug");
 //Nhúng phải tĩnh css,js,images
 app.use(express.static(`${__dirname}/public`));
 
+//TinyMCE
+var path = require('path');
+app.use('/tinymce', 
+express.static(path.join(__dirname, 'node_modules', 'tinymce'))
+);
+
+
+
 //Nhúng Routes đã tạo
 const routeClient = require("./routes/client/index.route");
 routeClient(app);
@@ -51,6 +59,8 @@ routeAdmin(app);
 // App Locals Variables , chỉ dùng dc trong file pug
 const systemConfig = require("./config/system");
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+
+
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);

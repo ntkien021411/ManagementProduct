@@ -45,8 +45,8 @@ module.exports.index = async (req, res) => {
   }else{
     sort.position = "asc";
   }
-  console.log(find);
-  console.log(sort);
+  // console.log(find);
+  // console.log(sort);
   const products = await Product.find(find)
     .sort(sort)
     .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
@@ -129,7 +129,7 @@ module.exports.deleteOnItem = async (req, res) => {
     { _id: id },
     { deleted: true, deletedAt: new Date() }
   );
-  req.flash("success", `Xóa thành công!`);
+  req.flash("success", `Xóa sản phẩm thành công!`);
   res.redirect("back");
 };
 

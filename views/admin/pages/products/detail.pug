@@ -30,7 +30,7 @@ block main
     if(product.position)
        div(class="mb-4") Vị trí: <b>#{product.position}</b>
     if(product.description)
-       div(class="mb-4") <b>#{product.description}</b> 
+       div(class="mb-4") !{product.description}
     a(href=`${prefixAdmin}/products/edit/${product.id}`
                     class="btn btn-warning btn-sm") Chỉnh sửa   
 
