@@ -5,7 +5,7 @@ include ../../mixins/alert.pug
 include ../../mixins/sort.pug
 include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
-include ../../mixins/table.pug
+include ../../mixins/tableCategory.pug
 block main
     +alertSuccess(5000)
     h1 Danh mục sản phẩm
@@ -51,7 +51,7 @@ block main
               th Trạng thái
               th Hành động 
           tbody
-            +tableTree(records) 
+            +tableCategory(records) 
             
     //- +pagination(pagination)
     form(action="" 

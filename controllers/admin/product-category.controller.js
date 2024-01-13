@@ -65,7 +65,6 @@ module.exports.index = async (req, res) => {
 // [GET] /admin/products-category/create
 module.exports.createPageProductCategory = async (req, res) => {
   let find = {
-    status: "active",
     deleted: false,
   };
 
