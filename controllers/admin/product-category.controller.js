@@ -3,7 +3,7 @@ const systemConfig = require("../../config/system");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
 const filterStatusHelper = require("../../helpers/filterStatus");
-
+const createTreeCategory = require("../../helpers/createTreeCategory");
 // [GET] /admin/products-category/
 module.exports.index = async (req, res) => {
   // BUTTON STATUS
@@ -13,7 +13,7 @@ module.exports.index = async (req, res) => {
   let find = {
     deleted: false,
   };
-  
+
   // LỌC STATUS
   if (req.query.status) {
     find.status = req.query.status;
@@ -23,45 +23,59 @@ module.exports.index = async (req, res) => {
   if (objectSearch.regex) {
     find.title = objectSearch.regex;
   }
-  //Total Page :
-  let countProducts = await ProductCategory.countDocuments(find);
-  //PAGINATION OBJECT
-  let objectPagination = paginationHelper(
-    req.query,
-    {
-      limitItem: 4,
-      currentPage: 1,
-    },
-    countProducts
-  );
+  // //Total Page :
+  // let countProducts = await ProductCategory.countDocuments(find);
+  // //PAGINATION OBJECT
+  // let objectPagination = paginationHelper(
+  //   req.query,
+  //   {
+  //     limitItem: 4,
+  //     currentPage: 1,
+  //   },
+  //   countProducts
+  // );
 
   //SẮP XẾP DANH MỤC SẢN PHẨM
   let sort = {};
   if (req.query.sortKey && req.query.sortValue) {
     sort[req.query.sortKey] = req.query.sortValue;
     // console.log(sort);
-  } else { //DEFAULT ASC BY POSITION
+  } else {
+    //DEFAULT ASC BY POSITION
     sort.position = "asc";
   }
+  //trả về 1 mảng các object item cha với thêm 1 thuộc tính là
+  // mảng các item con
+  
   // console.log(find);
   // console.log(sort);
   const record = await ProductCategory.find(find)
     .sort(sort)
-    .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
-    .skip(objectPagination.skip);
-
+    // .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
+    // .skip(objectPagination.skip);
+  const newRecords = createTreeCategory.createTree(record);
   res.render("admin/pages/products-category/index", {
     title: "Danh mục sản phẩm",
-    records: record,
+    records: newRecords,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
-    pagination: objectPagination,
+    // pagination: objectPagination,
   });
 };
 // [GET] /admin/products-category/create
 module.exports.createPageProductCategory = async (req, res) => {
+  let find = {
+    status: "active",
+    deleted: false,
+  };
+
+  const records = await ProductCategory.find(find);
+  const newRecords = createTreeCategory.createTree(records);
+  // console.log(newRecords);
+
   res.render("admin/pages/products-category/create", {
     title: "Tạo danh mục sản phẩm",
+    records: newRecords,
   });
 };
 // [POST] /admin/products-category/create
