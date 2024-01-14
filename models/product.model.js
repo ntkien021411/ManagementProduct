@@ -22,6 +22,10 @@ const productSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    product_category_id:{
+        type:String,
+        default:""
+    },
     deletedAt:Date
 },{
     // tạo thời gian khi update hoặc create
