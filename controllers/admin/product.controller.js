@@ -185,7 +185,7 @@ module.exports.editPatch = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
-
+  console.log(req.body);
   try {
     await Product.updateOne(
       {
@@ -210,6 +210,7 @@ module.exports.detail = async (req, res) => {
     };
 
     const product = await Product.findOne(find);
+    
     res.render("admin/pages/products/detail", {
       title: product.title,
       product: product,
