@@ -4,8 +4,7 @@ block main
     if(productCategory.title)
         h1(class="mb-4") #{productCategory.title}
 
-    if(productCategory.parent_id)
-        div(class="mb-4") Danh mục cha: <b>#{productCategory.parent_id}</b>
+    div(class="mb-4") Danh mục cha:  <b>#{productCategory.parent_id == "" ? "Đang là danh mục lớn nhất" :  productCategory.parent_id}</b>
 
     if(productCategory.thumbnail)
         div(class="mb-4")

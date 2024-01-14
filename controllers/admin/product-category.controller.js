@@ -231,10 +231,14 @@ module.exports.detail = async (req, res) => {
     };
 
     const productCategory = await ProductCategory.findOne(find);
-    
+    // const categoryParent = await ProductCategory.findOne({
+    //   deleted: false,
+    //   _id: productCategory.parent_id,
+    // });
     res.render("admin/pages/products-category/detail", {
       title: productCategory.title,
       productCategory: productCategory,
+      // categoryParent : categoryParent
     });
   } catch (error) {
     req.flash("error", `Danh mục sản phẩm không tồn tại!`);

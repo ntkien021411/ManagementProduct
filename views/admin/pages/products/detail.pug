@@ -13,6 +13,9 @@ block main
     if(product.stock)
         div(class="mb-4") Còn lại: <b>#{product.stock}</b>
 
+    if(category)
+        div(class="mb-4") Danh mục: <b>#{category.title}</b>
+
     if(product.thumbnail)
         div(class="mb-4")
             img(
