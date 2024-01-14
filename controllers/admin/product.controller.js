@@ -178,11 +178,15 @@ module.exports.edit = async (req, res) => {
       deleted: false,
       _id: req.params.id,
     };
-
+    const records = await ProductCategory.find({
+      deleted: false,
+    });
+    const newRecords = createTreeCategory.createTree(records);
     const product = await Product.findOne(find);
     res.render("admin/pages/products/edit", {
       title: "Chỉnh sửa sản phẩm",
       product: product,
+      records: newRecords,
     });
   } catch (error) {
     req.flash("error", `Sản phẩm không tồn tại!`);
@@ -196,7 +200,7 @@ module.exports.editPatch = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
-  console.log(req.body);
+  // console.log(req.body);
   try {
     await Product.updateOne(
       {
