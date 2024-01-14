@@ -175,6 +175,7 @@ module.exports.edit = async (req, res) => {
       product: product,
     });
   } catch (error) {
+    req.flash("error", `Sản phẩm không tồn tại!`);
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };
@@ -216,6 +217,7 @@ module.exports.detail = async (req, res) => {
       product: product,
     });
   } catch (error) {
+    req.flash("error", `Sản phẩm không tồn tại!`);
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };

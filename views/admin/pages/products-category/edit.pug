@@ -28,7 +28,7 @@ block main
                 class="form-control"
             )  
             option(value="") -- Chọn danh mục cha --  
-            +selectTree(records)
+            +selectTree(records,1,productCategory.parent_id)
         div(class="form-group")
             label(for="desc") Mô tả
             textarea(

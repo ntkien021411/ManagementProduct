@@ -177,15 +177,14 @@ module.exports.deleteOnItem = async (req, res) => {
 // [GET] /admin/products-category/edit:id
 module.exports.edit = async (req, res) => {
   try {
+    const id = req.params.id;
     let find = {
       deleted: false,
-      _id: req.params.id,
+      _id: id,
     };
-    let findAll = {
+    const records = await ProductCategory.find( {
       deleted: false,
-    };
-  
-    const records = await ProductCategory.find(findAll);
+    });
     const newRecords = createTreeCategory.createTree(records);
 
     const productCategory = await ProductCategory.findOne(find);
@@ -195,6 +194,7 @@ module.exports.edit = async (req, res) => {
       records : newRecords
     });
   } catch (error) {
+    req.flash("error", `Danh mục sản phẩm không tồn tại!`);
     res.redirect(`${systemConfig.prefixAdmin}/products-category`);
   }
 };
@@ -202,9 +202,11 @@ module.exports.edit = async (req, res) => {
 // [PATCH] /admin/products-category/edit:id
 module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+  req.body.position = parseInt(req.body.position);
+
+  if(id == req.body.parent_id){
+    req.body.parent_id = ""
+  }
   try {
     await ProductCategory.updateOne(
       {
@@ -235,6 +237,7 @@ module.exports.detail = async (req, res) => {
       productCategory: productCategory,
     });
   } catch (error) {
+    req.flash("error", `Danh mục sản phẩm không tồn tại!`);
     res.redirect(`${systemConfig.prefixAdmin}/products-category`);
   }
 };
