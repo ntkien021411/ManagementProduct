@@ -10,15 +10,15 @@ const validate = require("../../validates/admin/product.validate");
 
 router.post("/create",validate.createPost, controller.createRole);
 
-router.get("/edit/:id", controller.edit);
+router.get("/edit/:id", controller.editPage);
 
 router.patch(
   "/edit/:id",
   validate.createPost,
-  controller.editPatch
+  controller.editRole
 );
 
-router.delete("/delete/:id", controller.deleteOnItem);
 
 router.get("/detail/:id", controller.detail);
+router.delete("/delete/:id", controller.deleteRole);
 module.exports = router;

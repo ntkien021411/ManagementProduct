@@ -29,7 +29,7 @@ module.exports.createRole = async (req, res) => {
 };
 
 // [GET] /admin/roles/edit:id
-module.exports.edit = async (req, res) => {
+module.exports.editPage = async (req, res) => {
   try {
     let find = {
       deleted: false,
@@ -48,7 +48,7 @@ module.exports.edit = async (req, res) => {
 };
 
 // [PATCH] /admin/roles/edit:id
-module.exports.editPatch = async (req, res) => {
+module.exports.editRole = async (req, res) => {
   const id = req.params.id;
   try {
     await Role.updateOne(
@@ -86,7 +86,7 @@ module.exports.detail = async (req, res) => {
 };
 
 //[DELETE] /admin/roles/delete/:id
-module.exports.deleteOnItem = async (req, res) => {
+module.exports.deleteRole = async (req, res) => {
     const id = req.params.id;
     await Role.updateOne(
       { _id: id },
