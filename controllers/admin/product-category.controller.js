@@ -173,3 +173,68 @@ module.exports.deleteOnItem = async (req, res) => {
   req.flash("success", `Xóa danh mục sản phẩm thành công!`);
   res.redirect("back");
 };
+
+// [GET] /admin/products-category/edit:id
+module.exports.edit = async (req, res) => {
+  try {
+    let find = {
+      deleted: false,
+      _id: req.params.id,
+    };
+    let findAll = {
+      deleted: false,
+    };
+  
+    const records = await ProductCategory.find(findAll);
+    const newRecords = createTreeCategory.createTree(records);
+
+    const productCategory = await ProductCategory.findOne(find);
+    res.render("admin/pages/products-category/edit", {
+      title: "Chỉnh sửa danh mục sản phẩm",
+      productCategory: productCategory,
+      records : newRecords
+    });
+  } catch (error) {
+    res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+  }
+};
+
+// [PATCH] /admin/products-category/edit:id
+module.exports.editPatch = async (req, res) => {
+  const id = req.params.id;
+  req.body.price = parseInt(req.body.price);
+  req.body.discountPercentage = parseInt(req.body.discountPercentage);
+  req.body.stock = parseInt(req.body.stock);
+  try {
+    await ProductCategory.updateOne(
+      {
+        _id: id,
+      },
+      req.body
+    );
+    req.flash("success", `Cập nhật danh mục sản phẩm thành công!`);
+  } catch (error) {
+    req.flash("error", `Cập nhật danh mục thất bại!`);
+  }
+  // Điều hướng về url về trang danh sách sản phẩm
+  res.redirect(`back`);
+};
+
+// [GET] /admin/products-category/detail:id
+module.exports.detail = async (req, res) => {
+  try {
+    let find = {
+      deleted: false,
+      _id: req.params.id,
+    };
+
+    const productCategory = await ProductCategory.findOne(find);
+    
+    res.render("admin/pages/products-category/detail", {
+      title: productCategory.title,
+      productCategory: productCategory,
+    });
+  } catch (error) {
+    res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+  }
+};
