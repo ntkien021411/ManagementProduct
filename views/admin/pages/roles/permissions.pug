@@ -1,0 +1,52 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/tablePermissions.pug
+block main
+    +alertError(5000)
+    +alertSuccess(5000)
+    h1(class ="mb-4") Phân quyền
+    if(records)
+        div(data-records=records)
+        div(class="text-right")
+            button(
+                type="submit"
+                class="btn btn-primary mb-3"
+                button-submit
+            ) Cập nhật 
+        
+        table(
+            class = "table table-hover table-sm"
+            table-permissions
+        )
+            thead
+                tr
+                th Tính năng
+                    each item in records
+                        th(class="text-center ") #{item.title}
+            tbody
+                tr(data-name="id" class=" d-none") 
+                    td
+                        each item in records
+                            td(class="text-center")
+                                input(type="text" value=item.id
+
+                                )
+                +tableCategoryProduct(records)
+                +tableProduct(records)
+                +tableRole(records)        
+                
+        
+    else 
+        a(
+            href = `${prefixAdmin}/roles/create`
+                class = "btn btn-outline-success mb-4"
+            ) + Thêm mới                         
+    
+    form(
+          method="POST"
+          id="form-change-permissions"
+          action=`${prefixAdmin}/roles/permissions?_method=PATCH`)
+        div(class="form-group d-none")
+            input(type="text" class="form-control" name="permissions")      
+    
+    script(src="/admin/js/role.js")
