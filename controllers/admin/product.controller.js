@@ -45,7 +45,7 @@ module.exports.index = async (req, res) => {
   if (req.query.sortKey && req.query.sortValue) {
     sort[req.query.sortKey] = req.query.sortValue;
     // console.log(sort);
-  }else{
+  } else {
     sort.position = "asc";
   }
   // console.log(find);
@@ -218,21 +218,20 @@ module.exports.editPatch = async (req, res) => {
 
 // [GET] /admin/products/detail:id
 module.exports.detail = async (req, res) => {
-  try {
-    let find = {
-      deleted: false,
-      _id: req.params.id,
-    };
-
-    const product = await Product.findOne(find);
-    const category = await ProductCategory.findOne({
-      deleted: false,
-      _id: product.product_category_id,
-    });
+    try {
+  let find = {
+    deleted: false,
+    _id: req.params.id,
+  };
+  const product = await Product.findOne(find);
+  // const category = await ProductCategory.findOne({
+  //   deleted: false,
+  //   _id: product.product_category_id,
+  // });
     res.render("admin/pages/products/detail", {
       title: product.title,
       product: product,
-      category: category,
+      // category: category,
     });
   } catch (error) {
     req.flash("error", `Sản phẩm không tồn tại!`);

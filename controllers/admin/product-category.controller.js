@@ -73,7 +73,7 @@ module.exports.createPageProductCategory = async (req, res) => {
   // console.log(newRecords);
 
   res.render("admin/pages/products-category/create", {
-    title: "Tạo danh mục sản phẩm",
+    title: "Thêm mới danh mục sản phẩm",
     records: newRecords,
   });
 };
