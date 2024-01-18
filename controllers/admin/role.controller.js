@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
 };
 
 // [GET] /admin/roles/create
-module.exports.createRolePage = async (req, res) => {
+module.exports.createRolePage =  (req, res) => {
   res.render("admin/pages/roles/create", {
     title: "Thêm mới nhóm quyền",
   });

@@ -1,4 +1,6 @@
 extends ../../layouts/default.pug
-
+include ../../mixins/alert.pug
 block main
+    +alertError(5000)
+    +alertSuccess(5000)
     h1 Trang tổng quan
