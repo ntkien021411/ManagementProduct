@@ -105,7 +105,11 @@ module.exports.changeMulti = async (req, res) => {
     case "delete-all": //xóa mềm
       await Product.updateMany(
         { _id: { $in: ids } },
-        { deleted: true, deletedAt: new Date() }
+        { deleted: true, 
+          deletedBy : {
+          account_id:res.locals.user.id,
+          deletedAt: new Date()
+        }}
       );
       req.flash("success", `Xóa thành công ${ids.length} sản phẩm!`);
       break;
@@ -136,10 +140,17 @@ module.exports.deleteOnItem = async (req, res) => {
   const id = req.params.id;
   //Xóa mềm là chỉ update trường delete bằng true
   // cập nhật thêm thời gian xóa là thời gian user bấm nút delete(thời gian hiện tại)
+   
   await Product.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date() }
+    { deleted: true, 
+      deletedBy : {
+        account_id:res.locals.user.id,
+        deletedAt: new Date()
+      }
+     }
   );
+  
   req.flash("success", `Xóa sản phẩm thành công!`);
   res.redirect("back");
 };
