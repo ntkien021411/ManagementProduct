@@ -7,8 +7,8 @@ block main
     if(record.description)
         div(class="mb-4") Mô tả:  <b>#{record.description}</b>
     
-   
-    a(href=`${prefixAdmin}/roles/edit/${record.id}`
-                    class="btn btn-warning btn-sm") Chỉnh sửa   
+    if(role.permissions.includes("roles_edit"))
+        a(href=`${prefixAdmin}/roles/edit/${record.id}`
+                        class="btn btn-warning btn-sm") Chỉnh sửa   
 
     script(src="/admin/js/product.js")

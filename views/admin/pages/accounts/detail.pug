@@ -27,8 +27,8 @@ block main
                 span(class="badge badge-success") Hoạt động 
             else 
                 span(class="badge badge-danger") Dừng hoạt động   
-   
-    a(href=`${prefixAdmin}/accounts/edit/${record.id}`
-                    class="btn btn-warning btn-sm") Chỉnh sửa   
+    if(role.permissions.includes("accounts_edit")) 
+        a(href=`${prefixAdmin}/accounts/edit/${record.id}`
+                        class="btn btn-warning btn-sm") Chỉnh sửa   
 
     script(src="/admin/js/product.js")

@@ -9,60 +9,65 @@ include ../../mixins/tableCategory.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
-    h1 Danh mục sản phẩm
+    if(role.permissions.includes("products-category_view"))
+      h1 Danh mục sản phẩm
 
-    .card.mb-3 
-      .card-header Bộ lọc và Tìm kiếm 
-      .card-body
-        .row 
-          .col-6
-            +filterStatus(filterStatus) 
-          .col-6
-            +searchForm(keyword)
-    .card.mb-3
-      .card-header Sắp xếp
-      .card-body
-        .row 
-          .col-4 
-            +sortCategory()
-    .card.mb-3 
-      .card-header Danh sách 
-      .card-body
-        .row 
-          .col-8 
-            +form-change-multi(
-            `${prefixAdmin}/products-category/change-multi?_method=PATCH`
-            )
-          .col-4
-            a(
-              href=`${prefixAdmin}/products-category/create`
-              class = "btn btn-outline-success"
-            ) + Thêm mới
+      .card.mb-3 
+        .card-header Bộ lọc và Tìm kiếm 
+        .card-body
+          .row 
+            .col-6
+              +filterStatus(filterStatus) 
+            .col-6
+              +searchForm(keyword)
+      .card.mb-3
+        .card-header Sắp xếp
+        .card-body
+          .row 
+            .col-4 
+              +sortCategory()
+      .card.mb-3 
+        .card-header Danh sách 
+        .card-body
+          .row 
+            .col-8 
+              +form-change-multi(
+              `${prefixAdmin}/products-category/change-multi?_method=PATCH`
+              )
+            .col-4
+              if(role.permissions.includes("products-category_create"))
+                a(
+                  href=`${prefixAdmin}/products-category/create`
+                  class = "btn btn-outline-success"
+                ) + Thêm mới
 
-        table(class="table table-hover table-sm mt-2"
-              checkbox-multi) 
-          thead
-            tr
-              th 
-                input(type="checkbox" name="checkall" )
-              th STT
-              th Hình ảnh
-              th Tiêu đề
-              th Vị trí
-              th Trạng thái
-              th Hành động 
-          tbody
-            +tableCategory(records) 
-            
-    //- +pagination(pagination)
-    form(action="" 
-          method="POST"
-          id="form-change-status"
-          data-path=`${prefixAdmin}/products-category/change-status`)
-    form(action="" 
-          method="POST"
-          id="form-delete-item"
-          data-path=`${prefixAdmin}/products-category/delete`)
-        
-
+          table(class="table table-hover table-sm mt-2"
+                checkbox-multi) 
+            thead
+              tr
+                th 
+                  input(type="checkbox" name="checkall" )
+                th STT
+                th Hình ảnh
+                th Tiêu đề
+                th Vị trí
+                th Trạng thái
+                th Hành động 
+            tbody
+              +tableCategory(records) 
+              
+      //- +pagination(pagination)
+      if(role.permissions.includes("products-category_edit"))
+        form(action="" 
+              method="POST"
+              id="form-change-status"
+              data-path=`${prefixAdmin}/products-category/change-status`)
+      if(role.permissions.includes("products-category_delete"))
+        form(action="" 
+              method="POST"
+              id="form-delete-item"
+              data-path=`${prefixAdmin}/products-category/delete`)
+          
+    else 
+      h1 Bạn không có quyền trong trang này!
     

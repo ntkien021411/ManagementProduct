@@ -3,10 +3,23 @@ const systemConfig = require("../../config/system");
 var md5 = require("md5");
 
 // [GET] /admin/auth/login
-module.exports.loginPage = (req, res) => {
-  res.render("admin/pages/auth/login", {
-    title: "Đăng nhập",
-  });
+module.exports.loginPage = async (req, res) => {
+  if (req.cookies.token) {
+    const user = await Account.findOne({
+      token: req.cookies.token,
+    });
+    if (user) {
+      res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+    }else{
+      // console.log(123);
+      res.redirect(`http://localhost:3000/products`);
+      return;
+    }
+  } else {
+    res.render("admin/pages/auth/login", {
+      title: "Đăng nhập",
+    });
+  }
 };
 // [POST] /admin/auth/login
 module.exports.login = async (req, res) => {
@@ -26,21 +39,20 @@ module.exports.login = async (req, res) => {
     req.flash("error", `Sai mật khẩu!`);
     res.redirect(`back`);
     return;
-  } 
-  if (user.status =="inactive") {
+  }
+  if (user.status == "inactive") {
     req.flash("error", `Tài khoản đã bị khóa!`);
     res.redirect(`back`);
     return;
   }
 
-    req.flash("success", `Đăng nhập thành công!`);
-    res.cookie("token",user.token)
-    res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
-
+  req.flash("success", `Đăng nhập thành công!`);
+  res.cookie("token", user.token);
+  res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
 };
 
 // [GET] /admin/auth/logout
 module.exports.logout = (req, res) => {
-    res.clearCookie("token")
-    res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
-  };
+  res.clearCookie("token");
+  res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
+};
