@@ -5,6 +5,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/sort.pug
+include ../../mixins/moment.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
@@ -54,6 +55,7 @@ block main
                 th Giá
                 th Vị trí
                 th Trạng thái
+                th Người tạo
                 th Hành động 
             tbody 
               each item,index in products
@@ -78,6 +80,7 @@ block main
                       min="1"
                       name="position"
                     )
+                  
                   td
                     if(role.permissions.includes("products_edit")) 
                       if(item.status =="active")
@@ -95,6 +98,10 @@ block main
                         button( class="badge badge-success") Hoạt động
                       else 
                         button( class="badge badge-danger") Dừng hoạt động
+                  td 
+                    p #{item.accountFullName}
+                    if(item.accountFullName)
+                      +formatDateTime(item.createdBy.createdAt)
                   td
                     a(href=`${prefixAdmin}/products/detail/${item.id}`
                       class="btn btn-secondary btn-sm") Chi tiết 

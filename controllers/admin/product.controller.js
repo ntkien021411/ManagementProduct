@@ -5,7 +5,7 @@ const paginationHelper = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
 const ProductCategory = require("../../models/product-category.model");
 const createTreeCategory = require("../../helpers/createTreeCategory");
-
+const Account = require("../../models/account.model");
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
   //Nút bấm lọc trạng thái của product
@@ -54,6 +54,14 @@ module.exports.index = async (req, res) => {
     .sort(sort)
     .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
     .skip(objectPagination.skip); //Bỏ qua bnh sản phẩm để bắt đầu lấy limit
+  
+  for (const product of products) {
+      const user = await Account.findOne({_id : product.createdBy.account_id});
+      if(user){
+        product.accountFullName = user.fullName;
+      }
+
+  }
 
   res.render("admin/pages/products/index", {
     title: "Danh sách sản phẩm",
@@ -163,6 +171,10 @@ module.exports.createItem = async (req, res) => {
   }
   // console.log(req.body);
   //Tạo mới và lưu 1 sản phẩm vào db
+  req.body.createdBy={
+    //res.locals.user.id dùng cả view lẫn controller
+    account_id : res.locals.user.id
+  }
   const product = new Product(req.body);
   await product.save();
 

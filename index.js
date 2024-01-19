@@ -47,6 +47,9 @@ app.use('/tinymce',
 express.static(path.join(__dirname, 'node_modules', 'tinymce'))
 );
 
+//Moment xử lí time js
+var moment = require('moment')
+app.locals.moment = moment;
 
 
 //Nhúng Routes đã tạo
