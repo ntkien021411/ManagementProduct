@@ -3,11 +3,29 @@ const Role = require("../../models/role.model");
 const systemConfig = require("../../config/system");
 const paginationHelper = require("../../helpers/pagination");
 var md5 = require("md5");
+const filterStatusHelper = require("../../helpers/filterStatus");
+const searchHelper = require("../../helpers/search");
 // [GET] /admin/accounts/
 module.exports.index = async (req, res) => {
-  let find = {
-    deleted: false,
-  };
+ //Nút bấm lọc trạng thái của product
+ let filterStatus = filterStatusHelper(req.query);
+
+ //OBJECT BỘ LỌC VÀ TÌM KIẾM data TRONG MONGODB
+ let find = {
+   deleted: false,
+ };
+
+ //BỘ LỌC TRẠNG THÁI SẢN PHẨM
+ //http://localhost:3000/admin/products?keyword=Iphone
+ if (req.query.status) {
+   find.status = req.query.status;
+ }
+
+ //TÌM KIẾM SẢN PHẨM THEO TITLE
+ let objectSearch = searchHelper(req.query);
+ if (objectSearch.regex) {
+   find.fullName = objectSearch.regex;
+ }
   //Total Page :
   let countProducts = await Account.countDocuments(find);
   //PAGINATION
@@ -19,8 +37,17 @@ module.exports.index = async (req, res) => {
     },
     countProducts
   );
+  //SẮP XẾP SẢN PHẨM
+  let sort = {};
+  if (req.query.sortKey && req.query.sortValue) {
+    sort[req.query.sortKey] = req.query.sortValue;
+    // console.log(sort);
+  } else {
+    sort.position = "asc";
+  }
   const records = await Account.find(find)
     .select("-password -token")
+    .sort(sort)
     .limit(objectPagination.limitItem) //số phần tử cần lấy cho 1 trang
     .skip(objectPagination.skip);
 
@@ -33,9 +60,28 @@ module.exports.index = async (req, res) => {
       record.role = role;
     }
   }
+  for (const item of records) {
+    //Lấy ra thông tin người tạo
+    const userCreated = await Account.findOne({
+      _id: item.createdBy.account_id,
+    });
+    if (userCreated) {
+      item.accountFullName = userCreated.fullName;
+    }
+    //Lấy ra thông tin người cập nhật cuối cùng(1 mảng nhiều ng cập nhật)
+    const updatedBy = item.updatedBy.slice(-1)[0];
+    if (updatedBy) {
+      const userUpdated = await Account.findOne({
+        _id: updatedBy.account_id,
+      });
+      updatedBy.accountFullName = userUpdated.fullName;
+    }
+  }
   res.render("admin/pages/accounts/index", {
     title: "Danh sách tài khoản",
     records: records,
+    filterStatus: filterStatus,
+    keyword: objectSearch.keyword,
     pagination: objectPagination,
   });
 };
@@ -54,19 +100,23 @@ module.exports.createAccountsPage = async (req, res) => {
 
 // [POST] /admin/accounts/create
 module.exports.createAccounts = async (req, res) => {
-  const accountExist = Account.findOne({
+  const accountExist = await Account.findOne({
     email: req.body.email,
     deleted: false,
   });
-  if (!accountExist) {
+  if (accountExist) {
+    req.flash("error", `Email ${req.body.email} đã tồn tại!`);
+    res.redirect(`back`);
+  } else {
     req.body.password = md5(req.body.password);
+    req.body.createdBy = {
+      //res.locals.user.id dùng cả view lẫn controller
+      account_id: res.locals.user.id,
+    };
     const record = new Account(req.body);
     await record.save();
     req.flash("success", `Tạo mới tài khoản thành công!`);
     res.redirect(`${systemConfig.prefixAdmin}/accounts`);
-  } else {
-    req.flash("error", `Email ${req.body.email} đã tồn tại!`);
-    res.redirect(`back`);
   }
 };
 
@@ -103,6 +153,10 @@ module.exports.editAccount = async (req, res) => {
   if (accountExist) {
     req.flash("error", `Email ${req.body.email} đã tồn tại!`);
   } else {
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
     if (req.body.password) {
       req.body.password = md5(req.body.password);
     }else{
@@ -112,7 +166,10 @@ module.exports.editAccount = async (req, res) => {
       {
         _id: id,
       },
-      req.body
+      {
+        ...req.body,
+        $push: { updatedBy: updatedBy },
+      }
     );
     req.flash("success", `Cập nhật tài khoản thành công!`);
   }
@@ -154,7 +211,10 @@ module.exports.deleteAccount = async (req, res) => {
   const id = req.params.id;
   await Account.updateOne(
     { _id: id },
-    { deleted: true, deletedAt: new Date() }
+    { deleted: true, deletedBy: {
+      account_id: res.locals.user.id,
+      deletedAt: new Date(),
+    } }
   );
   req.flash("success", `Xóa tài khoản thành công!`);
   res.redirect("back");
@@ -164,8 +224,11 @@ module.exports.deleteAccount = async (req, res) => {
 module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
-
-  await Account.updateOne({ _id: id }, { status: status });
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+  await Account.updateOne({ _id: id }, { status: status ,  $push: { updatedBy: updatedBy }, });
   req.flash("success", "Cập nhật trạng thái tài khoản thành công!");
   res.redirect("back");
 };

@@ -132,39 +132,3 @@ if(uploadImage){
 
 }
 
-// Sort -SẮP XẾP
-const sort = document.querySelector("[sort]");
-if(sort){
-  const sortSelect = document.querySelector("[sort-select]");
-  const sortClear = document.querySelector("[sort-clear]");
-  // Lấy ra url ở trang web hiện tại
-  let url = new URL(window.location.href);
-
-  //Sắp xếp
-  sortSelect.addEventListener("change", (e)=>{
-    const value = e.target.value;
-    const[sortKey,sortValue] = value.split("-");
-
-    url.searchParams.set("sortKey", sortKey);
-    url.searchParams.set("sortValue", sortValue);
-    // console.log(sortKey,sortValue);
-    window.location.href = url.href;
-  })
-
-  //Xóa sắp xếp
-  sortClear.addEventListener("click", (e)=>{
-
-    url.searchParams.delete("sortKey");
-    url.searchParams.delete("sortValue");
-    // console.log(sortKey,sortValue);
-    window.location.href = url.href;
-  })
-  //Thêm selected cho option
-  const sortKey =  url.searchParams.get("sortKey");
-  const sortValue =  url.searchParams.get("sortValue");
-  if(sortKey && sortValue){
-    const stringSort = `${sortKey}-${sortValue}`;
-     const optionSort = sortSelect.querySelector(`option[value='${stringSort}']`);
-     optionSort.setAttribute("selected",true);
-  }
-}

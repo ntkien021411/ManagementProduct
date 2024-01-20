@@ -1,11 +1,27 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/moment.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+include ../../mixins/sort.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
     if(role.permissions.includes("roles_view"))
       h1(class ="mb-4") Nhóm quyền
-
+      .card.mb-3 
+        .card-header Bộ lọc và Tìm kiếm 
+        .card-body
+          .row 
+            .col-6
+            .col-6
+              +searchForm(keyword) 
+      .card.mb-3
+        .card-header Sắp xếp
+        .card-body
+          .row 
+            .col-4 
+              +sortRole() 
       .card.mb-3 
         .card-header Danh sách
         .card-body
@@ -23,15 +39,26 @@ block main
                 th STT
                 th Nhóm quyền
                 th Mô tả ngắn
+                th Người tạo
+                th Người cập nhật
                 th Hành động
                 
             tbody 
               if(records.length > 0)
                   each item,index in records
                       tr
-                          td #{index +1}
+                          td #{pagination.limitItem * (pagination.currentPage - 1) + (index+1)}
                           td #{item.title}
                           td #{item.description}
+                          td 
+                            p #{item.accountFullName}
+                            if(item.accountFullName)
+                              +formatDateTime(item.createdBy.createdAt)
+                          td 
+                            -const updatedBy = item.updatedBy.slice(-1)[0];
+                            if(updatedBy)
+                              p #{updatedBy.accountFullName}
+                              +formatDateTime(updatedBy.updatedAt)
                           td
                               a(href=`${prefixAdmin}/roles/detail/${item.id}`
                                   class="btn btn-secondary btn-sm") Chi tiết 
@@ -42,9 +69,11 @@ block main
                                 button(class="btn btn-danger btn-sm ml-1"
                                     button-delete
                                     data-id=item.id) Xóa
+                  
               else 
                   tr 
                       td(colspan="4" class="text-center") Chưa có nhóm quyền nào được tạo
+      +pagination(pagination)
       if(role.permissions.includes("roles_view"))
         form(action="" 
               method="POST"

@@ -14,7 +14,7 @@ router.patch("/change-status/:status/:id", controller.changeStatus);
 //thay đổi nhiều và xóa mềm nhiều sản phẩm đều ở trong controller này
 router.patch("/change-multi", controller.changeMulti);
 
-router.delete("/delete/:id", controller.deleteOnItem);
+router.delete("/delete/:id", controller.deleteOneItem);
 
 router.get("/create", controller.createPage);
 

@@ -31,7 +31,34 @@ mixin sortCategory()
             class="btn btn-danger mt-2 mb-2"
             sort-clear
               ) Clear
-
+mixin sortRole()
+    div(sort)
+        select(
+            class="form-control"
+            name="sort"
+            sort-select
+            )
+            option(value="title-asc") Tiêu đề A - Z
+            option(value="title-desc") Tiêu đề Z - A 
+        button(
+            class="btn btn-danger mt-2 mb-2"
+            sort-clear
+              ) Clear
+mixin sortAccount()
+    div(sort)
+        select(
+            class="form-control"
+            name="sort"
+            sort-select
+            )
+            option(value="fullName-asc") Họ tên A - Z
+            option(value="fullName-desc") Họ tên Z - A 
+            option(value="email-asc") Email A - Z
+            option(value="email-desc") Email Z - A 
+        button(
+            class="btn btn-danger mt-2 mb-2"
+            sort-clear
+              ) Clear
                 
 
 

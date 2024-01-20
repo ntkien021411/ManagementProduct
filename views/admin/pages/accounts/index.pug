@@ -1,13 +1,30 @@
 extends ../../layouts/default.pug
 include ../../mixins/pagination.pug
 include ../../mixins/alert.pug
-
+include ../../mixins/moment.pug
+include ../../mixins/filterStatus.pug
+include ../../mixins/search.pug
+include ../../mixins/sort.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
     if(role.permissions.includes("accounts_view"))
       h1 Danh sách tài khoản
+      .card.mb-3 
+        .card-header Bộ lọc và Tìm kiếm 
+        .card-body
+          .row 
+            .col-6
+              +filterStatus(filterStatus) 
+            .col-6
+              +searchForm(keyword) 
 
+      .card.mb-3
+        .card-header Sắp xếp
+        .card-body
+          .row 
+            .col-4 
+              +sortAccount() 
       .card.mb-3 
         .card-header Danh sách
         .card-body
@@ -32,6 +49,8 @@ block main
                 th Phân quyền
                 th Email
                 th Trạng thái
+                th Người tạo
+                th Người cập nhật
                 th Hành động
             tbody 
               each item,index in records
@@ -64,7 +83,15 @@ block main
                         button( class="badge badge-success") Hoạt động
                       else 
                         button( class="badge badge-danger") Dừng hoạt động
-
+                  td 
+                    p #{item.accountFullName}
+                    if(item.accountFullName)
+                      +formatDateTime(item.createdBy.createdAt)
+                  td 
+                    -const updatedBy = item.updatedBy.slice(-1)[0];
+                    if(updatedBy)
+                      p #{updatedBy.accountFullName}
+                      +formatDateTime(updatedBy.updatedAt)
                   td
                     
                     a(href=`${prefixAdmin}/accounts/detail/${item.id}`

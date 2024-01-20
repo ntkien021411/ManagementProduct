@@ -1,3 +1,4 @@
+include ./moment.pug
 mixin tableCategory(records,level = 1)
     each item in records
         - const prefix = Array(level+1).join("- ")
@@ -39,7 +40,15 @@ mixin tableCategory(records,level = 1)
                     else 
                         button(href="javascript:;"
                         class="badge badge-danger") Dừng hoạt động
-                
+            td 
+                p #{item.accountFullName}
+                if(item.accountFullName)
+                    +formatDateTime(item.createdBy.createdAt)
+            td 
+                -const updatedBy = item.updatedBy.slice(-1)[0];
+                if(updatedBy)
+                    p #{updatedBy.accountFullName}
+                    +formatDateTime(updatedBy.updatedAt)   
             td
                 a(href=`${prefixAdmin}/products-category/detail/${item.id}`
                     class="btn btn-secondary btn-sm") Chi tiết 
