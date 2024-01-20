@@ -205,3 +205,32 @@ module.exports.changePermissions = async (req, res) => {
   }
   res.redirect(`back`);
 };
+// [PATCH] /admin/roles/change-multi/
+// giữa trên form body để dùng req.body
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type;
+  const ids = req.body.ids.split(",");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+  switch (type) {
+    
+    case "delete-all": //xóa mềm
+      await Role.updateMany(
+        { _id: { $in: ids } },
+        {
+          deleted: true,
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
+        }
+      );
+      req.flash("success", `Xóa thành công ${ids.length} nhóm quyền!`);
+      break;
+    
+  }
+  res.redirect("back");
+};
+

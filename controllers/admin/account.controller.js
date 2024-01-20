@@ -232,4 +232,51 @@ module.exports.changeStatus = async (req, res) => {
   req.flash("success", "Cập nhật trạng thái tài khoản thành công!");
   res.redirect("back");
 };
-//
+// [PATCH] /admin/accounts/change-multi/
+// giữa trên form body để dùng req.body
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type;
+  const ids = req.body.ids.split(",");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+  switch (type) {
+    case "active":
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        { status: "active", $push: { updatedBy: updatedBy } }
+      );
+      req.flash(
+        "success",
+        `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
+      );
+      break;
+    case "inactive":
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        { status: "inactive", $push: { updatedBy: updatedBy } }
+      );
+      req.flash(
+        "success",
+        `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
+      );
+      break;
+    case "delete-all": //xóa mềm
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        {
+          deleted: true,
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
+        }
+      );
+      req.flash("success", `Xóa thành công ${ids.length} tài khoản!`);
+      break;
+    
+  }
+  res.redirect("back");
+};
+

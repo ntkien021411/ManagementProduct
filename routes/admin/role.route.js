@@ -23,6 +23,9 @@ router.get("/detail/:id", controller.detail);
 
 router.delete("/delete/:id", controller.deleteRole);
 
+//Delete all
+router.patch("/change-multi", controller.changeMulti);
+
 //Phân quyền
 router.get("/permissions", controller.permissions);
 router.patch("/permissions", controller.changePermissions);

@@ -32,10 +32,11 @@ block main
         .card-header Danh sách 
         .card-body
           .row 
-            .col-8 
-              +form-change-multi(
-              `${prefixAdmin}/products/change-multi?_method=PATCH`
-              )
+            .col-8
+              if(role.permissions.includes("products_edit"))  
+                +form-change-multi(
+                `${prefixAdmin}/products/change-multi?_method=PATCH`
+                )
             .col-4
               if(role.permissions.includes("products_create"))
                 a(

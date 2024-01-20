@@ -5,6 +5,7 @@ include ../../mixins/moment.pug
 include ../../mixins/filterStatus.pug
 include ../../mixins/search.pug
 include ../../mixins/sort.pug
+include ../../mixins/form-change-multi.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
@@ -29,8 +30,11 @@ block main
         .card-header Danh sách
         .card-body
           .row 
-            .col-8 
-              
+            .col-8
+              if(role.permissions.includes("accounts_edit"))  
+                +form-change-multi-account(
+                `${prefixAdmin}/accounts/change-multi?_method=PATCH`
+                )
             .col-4.text-right
               if(role.permissions.includes("accounts_create"))
                 a(
@@ -42,7 +46,8 @@ block main
                 checkbox-multi) 
             thead
               tr
-                
+                th 
+                  input(type="checkbox" name="checkall" )
                 th STT
                 th Avatar
                 th Họ tên
@@ -55,6 +60,8 @@ block main
             tbody 
               each item,index in records
                 tr
+                  td 
+                    input(type="checkbox" name="id" value=item.id)
                   td #{pagination.limitItem * (pagination.currentPage - 1) + (index+1)}
                   td 
                     img(
@@ -105,15 +112,15 @@ block main
                         data-id=item.id) Xóa
       
       +pagination(pagination)
-    if(role.permissions.includes("accounts_edit"))    
-      form(action="" 
-            method="POST"
-            id="form-change-status"
-            data-path=`${prefixAdmin}/accounts/change-status`)
-    if(role.permissions.includes("accounts_delete"))        
-      form(action="" 
-            method="POST"
-            id="form-delete-item"
-            data-path=`${prefixAdmin}/accounts/delete`)
+      if(role.permissions.includes("accounts_edit"))    
+        form(action="" 
+              method="POST"
+              id="form-change-status"
+              data-path=`${prefixAdmin}/accounts/change-status`)
+      if(role.permissions.includes("accounts_delete"))        
+        form(action="" 
+              method="POST"
+              id="form-delete-item"
+              data-path=`${prefixAdmin}/accounts/delete`)
     else 
       h1 Bạn không có quyền trong trang này!
