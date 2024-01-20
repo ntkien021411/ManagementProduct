@@ -22,7 +22,7 @@ block main
                 span(class="badge badge-danger") Dừng hoạt động   
     if(postCategory.description)
        div(class="mb-4") !{postCategory.description}
-    if(role.permissions.includes("products-category_edit"))
+    if(role.permissions.includes("posts-category_edit"))
         a(href=`${prefixAdmin}/posts-category/edit/${postCategory.id}`
                         class="btn btn-warning btn-sm") Chỉnh sửa   
 

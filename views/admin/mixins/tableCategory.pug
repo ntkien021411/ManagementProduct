@@ -107,10 +107,10 @@ mixin tableCategoryPost(records,level = 1)
             td
                 a(href=`${prefixAdmin}/posts-category/detail/${item.id}`
                     class="btn btn-secondary btn-sm") Chi tiết 
-                if(role.permissions.includes("products-category_edit"))
+                if(role.permissions.includes("posts-category_edit"))
                     a(href=`${prefixAdmin}/posts-category/edit/${item.id}`
                     class="btn btn-warning btn-sm") Sửa
-                if(role.permissions.includes("products-category_delete"))
+                if(role.permissions.includes("posts-category_delete"))
                     button(class="btn btn-danger btn-sm ml-1"
                     button-delete
                     data-id=item.id) Xóa

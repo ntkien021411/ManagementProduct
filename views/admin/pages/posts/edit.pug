@@ -4,7 +4,7 @@ include ../../mixins/select-tree.pug
 block main
     +alertError(5000)
     +alertSuccess(5000)
-    if(role.permissions.includes("products-category_edit"))
+    if(role.permissions.includes("posts_edit"))
         h1(class="mb-4") Chỉnh sửa bài viết
 
         form(action=`${prefixAdmin}/posts/edit/${post._id}?_method=PATCH`
