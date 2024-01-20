@@ -286,14 +286,13 @@ module.exports.detail = async (req, res) => {
       _id: req.params.id,
     };
     const product = await Product.findOne(find);
-    // const category = await ProductCategory.findOne({
-    //   deleted: false,
-    //   _id: product.product_category_id,
-    // });
+    const category = await ProductCategory.findOne({
+      _id: product.product_category_id,
+    });
     res.render("admin/pages/products/detail", {
       title: product.title,
       product: product,
-      // category: category,
+      category: category,
     });
   } catch (error) {
     req.flash("error", `Sản phẩm không tồn tại!`);
