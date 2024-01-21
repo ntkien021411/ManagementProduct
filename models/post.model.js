@@ -11,6 +11,7 @@ const postSchema = new mongoose.Schema({
     default: "",
   },
   description: String,
+  content: String,
   thumbnail: String,
   status: String,
   position: Number,

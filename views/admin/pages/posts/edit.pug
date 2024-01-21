@@ -39,7 +39,14 @@ block main
                     row="5"
                     value=post.description
                 ) #{post.description}
-            
+                label(for="content" class="mt-3") Mô tả
+                textarea(
+                    class="form-control textarea-mce"
+                    id="desc"
+                    name="content"
+                    row="5"
+                    value=post.content
+                ) #{post.content}
             div(class="form-group"
                 upload-image)
                 label(for="thumbnail") Ảnh

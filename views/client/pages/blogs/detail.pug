@@ -1,0 +1,26 @@
+extends ../../layouts/default.pug
+
+block main
+    .container.my-3
+        .row
+            .col-12
+                if(blog.title)
+                    h1(class="mb-4") #{blog.title}
+
+    
+                if(blog.description)
+                    div(class="mb-4") <b>!{blog.description} </b>
+
+                
+                if(blog.thumbnail)
+                    div(class="mb-4")
+                        img(
+                            src=blog.thumbnail 
+                            style="width:100px"
+                        )
+
+                if(blog.position)
+                div(class="mb-4") Vị trí: <b>#{blog.position}</b>
+                
+                if(postCategory.title)
+                div(class="mb-4") <b>!{postCategory.title}</b> 

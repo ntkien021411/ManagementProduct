@@ -22,9 +22,14 @@ block main
             else 
                 span(class="badge badge-danger") Dừng hoạt động   
     if(post.position)
+    
        div(class="mb-4") Vị trí: <b>#{post.position}</b>
     if(post.description)
+     div(class="mb-4")  <b>Mô tả</b>
        div(class="mb-4") !{post.description}
+    if(post.content)
+     div(class="mb-4") <b>Nội dung chi tiết</b>
+       div(class="mb-4") !{post.content}
     if(role.permissions.includes("posts_edit"))
         a(href=`${prefixAdmin}/posts/edit/${post.id}`
                         class="btn btn-warning btn-sm") Chỉnh sửa   

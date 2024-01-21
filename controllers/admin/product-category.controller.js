@@ -72,6 +72,7 @@ module.exports.index = async (req, res) => {
       }
     }
   const newRecords = createTreeCategory.createTree(record);
+  // console.log(newRecords);
   res.render("admin/pages/products-category/index", {
     title: "Danh mục sản phẩm",
     records: newRecords,
@@ -239,10 +240,11 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
   req.body.position = parseInt(req.body.position);
-
+  
   if(id == req.body.parent_id){
     req.body.parent_id = ""
   }
+  // console.log(req.body);
   try {
     const updatedBy = {
       account_id: res.locals.user.id,

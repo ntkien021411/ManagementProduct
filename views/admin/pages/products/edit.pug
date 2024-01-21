@@ -30,6 +30,26 @@ block main
                 )  
                 option(value="") -- Chọn danh mục sản phẩm --  
                 +selectTree(records,1,product.product_category_id)
+            div(class="form-group form-check form-check-inline")
+                input(
+                    type="radio"
+                    class="form-check-input"
+                    id="statusActive"
+                    name="feature"
+                    value="1"
+                    checked = (product.feature=="1" ? true : false)
+                )
+                label(for="statusActive" class="form-check-label") Nổi bật
+            div(class="form-group form-check form-check-inline")
+                input(
+                    type="radio"
+                    class="form-check-input"
+                    id="statusInActive"
+                    name="feature"
+                    value="0"
+                    checked = (product.feature=="0" ? true : false)
+                )
+                label(for="statusInActive" class="form-check-label") Không 
             div(class="form-group")
                 label(for="desc") Mô tả
                 textarea(
