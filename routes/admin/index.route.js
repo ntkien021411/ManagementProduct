@@ -13,6 +13,7 @@ const authRoutes = require('./auth.route');
 //Middleware for route private (phải đăng nhập mới được truy cập vào route)
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
+const myAccountsRoutes = require('./my-account.route');
 module.exports = (app) => {
   const PATH_ADMIN = systemConfig.prefixAdmin;
 
@@ -29,7 +30,10 @@ module.exports = (app) => {
   // app.use(PATH_ADMIN+"/posts",);
 
   app.use(PATH_ADMIN+"/posts-category",authMiddleware.requireAuth,postCategoryRoutes);
+  
   app.use(PATH_ADMIN+"/posts",authMiddleware.requireAuth,postRoutes);
+
+  app.use(PATH_ADMIN+"/my-account",authMiddleware.requireAuth,myAccountsRoutes);
   //Login 
   app.use(PATH_ADMIN+"/auth", authRoutes);
 
