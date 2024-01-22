@@ -7,25 +7,25 @@ const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 // [GET] /admin/accounts/
 module.exports.index = async (req, res) => {
- //Nút bấm lọc trạng thái của product
- let filterStatus = filterStatusHelper(req.query);
+  //Nút bấm lọc trạng thái của product
+  let filterStatus = filterStatusHelper(req.query);
 
- //OBJECT BỘ LỌC VÀ TÌM KIẾM data TRONG MONGODB
- let find = {
-   deleted: false,
- };
+  //OBJECT BỘ LỌC VÀ TÌM KIẾM data TRONG MONGODB
+  let find = {
+    deleted: false,
+  };
 
- //BỘ LỌC TRẠNG THÁI SẢN PHẨM
- //http://localhost:3000/admin/products?keyword=Iphone
- if (req.query.status) {
-   find.status = req.query.status;
- }
+  //BỘ LỌC TRẠNG THÁI SẢN PHẨM
+  //http://localhost:3000/admin/products?keyword=Iphone
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
 
- //TÌM KIẾM SẢN PHẨM THEO TITLE
- let objectSearch = searchHelper(req.query);
- if (objectSearch.regex) {
-   find.fullName = objectSearch.regex;
- }
+  //TÌM KIẾM SẢN PHẨM THEO TITLE
+  let objectSearch = searchHelper(req.query);
+  if (objectSearch.regex) {
+    find.fullName = objectSearch.regex;
+  }
   //Total Page :
   let countProducts = await Account.countDocuments(find);
   //PAGINATION
@@ -100,23 +100,29 @@ module.exports.createAccountsPage = async (req, res) => {
 
 // [POST] /admin/accounts/create
 module.exports.createAccounts = async (req, res) => {
-  const accountExist = await Account.findOne({
-    email: req.body.email,
-    deleted: false,
-  });
-  if (accountExist) {
-    req.flash("error", `Email ${req.body.email} đã tồn tại!`);
-    res.redirect(`back`);
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("accounts_create")) {
+    const accountExist = await Account.findOne({
+      email: req.body.email,
+      deleted: false,
+    });
+    if (accountExist) {
+      req.flash("error", `Email ${req.body.email} đã tồn tại!`);
+      res.redirect(`back`);
+    } else {
+      req.body.password = md5(req.body.password);
+      req.body.createdBy = {
+        //res.locals.user.id dùng cả view lẫn controller
+        account_id: res.locals.user.id,
+      };
+      const record = new Account(req.body);
+      await record.save();
+      req.flash("success", `Tạo mới tài khoản thành công!`);
+      res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+    }
   } else {
-    req.body.password = md5(req.body.password);
-    req.body.createdBy = {
-      //res.locals.user.id dùng cả view lẫn controller
-      account_id: res.locals.user.id,
-    };
-    const record = new Account(req.body);
-    await record.save();
-    req.flash("success", `Tạo mới tài khoản thành công!`);
-    res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+    res.send("403");
+    return;
   }
 };
 
@@ -143,39 +149,45 @@ module.exports.editAccountPage = async (req, res) => {
 
 // [PATCH] /admin/accounts/edit:id
 module.exports.editAccount = async (req, res) => {
-  const id = req.params.id;
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("accounts_edit")) {
+    const id = req.params.id;
 
-  const accountExist = await Account.findOne({
-    _id : {$ne: id},
-    email: req.body.email,
-    deleted: false,
-  });
-  if (accountExist) {
-    req.flash("error", `Email ${req.body.email} đã tồn tại!`);
-  } else {
-    const updatedBy = {
-      account_id: res.locals.user.id,
-      updatedAt: new Date(),
-    };
-    if (req.body.password) {
-      req.body.password = md5(req.body.password);
-    }else{
-        delete  req.body.password;
-    }
-    await Account.updateOne(
-      {
-        _id: id,
-      },
-      {
-        ...req.body,
-        $push: { updatedBy: updatedBy },
+    const accountExist = await Account.findOne({
+      _id: { $ne: id },
+      email: req.body.email,
+      deleted: false,
+    });
+    if (accountExist) {
+      req.flash("error", `Email ${req.body.email} đã tồn tại!`);
+    } else {
+      const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date(),
+      };
+      if (req.body.password) {
+        req.body.password = md5(req.body.password);
+      } else {
+        delete req.body.password;
       }
-    );
-    req.flash("success", `Cập nhật tài khoản thành công!`);
-  }
+      await Account.updateOne(
+        {
+          _id: id,
+        },
+        {
+          ...req.body,
+          $push: { updatedBy: updatedBy },
+        }
+      );
+      req.flash("success", `Cập nhật tài khoản thành công!`);
+    }
 
-  // Điều hướng về url về trang danh sách sản phẩm
-  res.redirect(`back`);
+    // Điều hướng về url về trang danh sách sản phẩm
+    res.redirect(`back`);
+  } else {
+    res.send("403");
+    return;
+  }
 };
 
 // [GET] /admin/accounts/detail:id
@@ -208,29 +220,47 @@ module.exports.detail = async (req, res) => {
 
 //[DELETE] /admin/accounts/delete/:id
 module.exports.deleteAccount = async (req, res) => {
-  const id = req.params.id;
-  await Account.updateOne(
-    { _id: id },
-    { deleted: true, deletedBy: {
-      account_id: res.locals.user.id,
-      deletedAt: new Date(),
-    } }
-  );
-  req.flash("success", `Xóa tài khoản thành công!`);
-  res.redirect("back");
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("accounts_delete")) {
+    const id = req.params.id;
+    await Account.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: {
+          account_id: res.locals.user.id,
+          deletedAt: new Date(),
+        },
+      }
+    );
+    req.flash("success", `Xóa tài khoản thành công!`);
+    res.redirect("back");
+  } else {
+    res.send("403");
+    return;
+  }
 };
 
 // [PATCH] /admin/accounts/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  const status = req.params.status;
-  const id = req.params.id;
-  const updatedBy = {
-    account_id: res.locals.user.id,
-    updatedAt: new Date(),
-  };
-  await Account.updateOne({ _id: id }, { status: status ,  $push: { updatedBy: updatedBy }, });
-  req.flash("success", "Cập nhật trạng thái tài khoản thành công!");
-  res.redirect("back");
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("accounts_edit")) {
+    const status = req.params.status;
+    const id = req.params.id;
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
+    await Account.updateOne(
+      { _id: id },
+      { status: status, $push: { updatedBy: updatedBy } }
+    );
+    req.flash("success", "Cập nhật trạng thái tài khoản thành công!");
+    res.redirect("back");
+  } else {
+    res.send("403");
+    return;
+  }
 };
 // [PATCH] /admin/accounts/change-multi/
 // giữa trên form body để dùng req.body
@@ -241,42 +271,56 @@ module.exports.changeMulti = async (req, res) => {
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
+  const permissions = res.locals.role.permissions;
   switch (type) {
     case "active":
-      await Account.updateMany(
-        { _id: { $in: ids } },
-        { status: "active", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
-      );
-      break;
+      if (permissions.includes("accounts_edit")) {
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          { status: "active", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
+        );
+        break;
+      } else {
+        res.send("403");
+        return;
+      }
     case "inactive":
-      await Account.updateMany(
-        { _id: { $in: ids } },
-        { status: "inactive", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
-      );
-      break;
+      if (permissions.includes("accounts_edit")) {
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          { status: "inactive", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái thành công ${ids.length} tài khoản!`
+        );
+        break;
+      } else {
+        res.send("403");
+        return;
+      }
     case "delete-all": //xóa mềm
-      await Account.updateMany(
-        { _id: { $in: ids } },
-        {
-          deleted: true,
-          deletedBy: {
-            account_id: res.locals.user.id,
-            deletedAt: new Date(),
-          },
-        }
-      );
-      req.flash("success", `Xóa thành công ${ids.length} tài khoản!`);
-      break;
-    
+      if (permissions.includes("accounts_delete")) {
+        await Account.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: {
+              account_id: res.locals.user.id,
+              deletedAt: new Date(),
+            },
+          }
+        );
+        req.flash("success", `Xóa thành công ${ids.length} tài khoản!`);
+        break;
+        res.redirect("back");
+      } else {
+        res.send("403");
+        return;
+      }
   }
-  res.redirect("back");
 };
-

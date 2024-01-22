@@ -12,10 +12,10 @@ header.header
                         li 
                             a(href="/") Trang chủ
                         li(class="sub-menu")
-                            -const pathProduct ="products";
+                            -const pathProduct ="/products";
                             a(href=pathProduct) Sản phẩm
                                 +sub-menu(layoutCategory,pathProduct)
                         li(class="sub-menu")
-                            -const pathBlog ="blogs";
+                            -const pathBlog ="/blogs";
                             a(href=pathBlog) Blog
                                 +sub-menu(layoutPosts,pathBlog)

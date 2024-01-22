@@ -49,8 +49,10 @@ header {
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
+    height: 100%;
 }
 .product-item .inner-image{
+  position: relative;
     width: 100%;
     aspect-ratio: 4/3;
     border-bottom: 1px solid #ddd;
@@ -91,6 +93,17 @@ header {
         display: inline-block;
         padding: 3px 10px;
         border-radius: 8px;
+}
+.product-item .inner-featured{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: green;
+  color: white;
+  padding: 3px 6px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
 }
 /* End product-item */
 

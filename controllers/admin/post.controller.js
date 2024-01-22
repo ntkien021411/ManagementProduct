@@ -97,38 +97,52 @@ module.exports.createPagePost = async (req, res) => {
 };
 // [POST] /admin/posts/create
 module.exports.createPost = async (req, res) => {
-  if (req.body.position == "") {
-    const countProducts = await Post.countDocuments();
-    req.body.position = countProducts + 1;
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("posts_create")) {
+    if (req.body.position == "") {
+      const countProducts = await Post.countDocuments();
+      req.body.position = countProducts + 1;
+    } else {
+      req.body.position = parseInt(res.body.position);
+    }
+    req.body.createdBy = {
+      //res.locals.user.id dùng cả view lẫn controller
+      account_id: res.locals.user.id,
+    };
+    // console.log(req.body);
+    const record = new Post(req.body);
+    await record.save();
+  
+    req.flash("success", `Tạo mới bài viết thành công!`);
+    res.redirect(`${systemConfig.prefixAdmin}/posts`);
+    
   } else {
-    req.body.position = parseInt(res.body.position);
+    res.send("403");
+    return;
   }
-  req.body.createdBy = {
-    //res.locals.user.id dùng cả view lẫn controller
-    account_id: res.locals.user.id,
-  };
-  // console.log(req.body);
-  const record = new Post(req.body);
-  await record.save();
-
-  req.flash("success", `Tạo mới bài viết thành công!`);
-  res.redirect(`${systemConfig.prefixAdmin}/posts`);
 };
 
 // [PATCH] /admin/posts/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  const status = req.params.status;
-  const id = req.params.id;
-  const updatedBy = {
-    account_id: res.locals.user.id,
-    updatedAt: new Date(),
-  };
-  await Post.updateOne(
-    { _id: id },
-    { status: status, $push: { updatedBy: updatedBy } }
-  );
-  req.flash("success", "Cập nhật trạng thái bài viết thành công!");
-  res.redirect("back");
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("posts_edit")) {
+    
+    const status = req.params.status;
+    const id = req.params.id;
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
+    await Post.updateOne(
+      { _id: id },
+      { status: status, $push: { updatedBy: updatedBy } }
+    );
+    req.flash("success", "Cập nhật trạng thái bài viết thành công!");
+    res.redirect("back");
+  } else {
+    res.send("403");
+    return;
+  }
 };
 
 // [PATCH] /admin/posts/change-multi/
@@ -140,28 +154,44 @@ module.exports.changeMulti = async (req, res) => {
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
+  const permissions = res.locals.role.permissions;
+
   switch (type) {
     case "active":
-      await Post.updateMany(
-        { _id: { $in: ids } },
-        { status: "active", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái thành công ${ids.length} bài viết`
-      );
-      break;
+      if (permissions.includes("posts_edit")) {
+        await Post.updateMany(
+          { _id: { $in: ids } },
+          { status: "active", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái thành công ${ids.length} bài viết`
+        );
+        break;
+        
+      } else {
+        res.send("403");
+        return;
+      }
     case "inactive":
-      await Post.updateMany(
-        { _id: { $in: ids } },
-        { status: "inactive", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái  thành công ${ids.length} bài viết`
-      );
-      break;
+      if (permissions.includes("posts_edit")) {
+        
+        await Post.updateMany(
+          { _id: { $in: ids } },
+          { status: "inactive", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái  thành công ${ids.length} bài viết`
+        );
+        break;
+      } else {
+        res.send("403");
+        return;
+      }
     case "delete-all": //xóa mềm
+    if (permissions.includes("posts_delete")) {
+        
       await Post.updateMany(
         { _id: { $in: ids } },
         {
@@ -174,7 +204,13 @@ module.exports.changeMulti = async (req, res) => {
       );
       req.flash("success", `Xóa thành công ${ids.length} bài viết!`);
       break;
+    } else {
+      res.send("403");
+      return;
+    }
     case "change-position": //Thay đổi vị trí
+    if (permissions.includes("posts_edit")) {
+        
       for (const item of ids) {
         // phần tử gồm 1 chuỗi id-position
         let [id, position] = item.split("-");
@@ -193,27 +229,38 @@ module.exports.changeMulti = async (req, res) => {
         `Cập nhật vị trí thành công ${ids.length} bài viết!`
       );
       break;
+    } else {
+      res.send("403");
+      return;
+    }
   }
   res.redirect("back");
 };
 
 //[DELETE] /admin/posts/delete/:id
 module.exports.deleteOnItem = async (req, res) => {
-  const id = req.params.id;
-  //Xóa mềm là chỉ update trường delete bằng true
-  // cập nhật thêm thời gian xóa là thời gian user bấm nút delete(thời gian hiện tại)
-  await Post.updateOne(
-    { _id: id },
-    {
-      deleted: true,
-      deletedBy: {
-        account_id: res.locals.user.id,
-        deletedAt: new Date(),
-      },
-    }
-  );
-  req.flash("success", `Xóa bài viết thành công!`);
-  res.redirect("back");
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("posts_delete")) {
+        
+    const id = req.params.id;
+    //Xóa mềm là chỉ update trường delete bằng true
+    // cập nhật thêm thời gian xóa là thời gian user bấm nút delete(thời gian hiện tại)
+    await Post.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: {
+          account_id: res.locals.user.id,
+          deletedAt: new Date(),
+        },
+      }
+    );
+    req.flash("success", `Xóa bài viết thành công!`);
+    res.redirect("back");
+  } else {
+    res.send("403");
+    return;
+  }
 };
 
 // [GET] /admin/posts/edit:id
@@ -244,27 +291,34 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/posts/edit:id
 module.exports.editPatch = async (req, res) => {
-  const id = req.params.id;
-  try {
-    const updatedBy = {
-      account_id: res.locals.user.id,
-      updatedAt: new Date(),
-    };
-    await Post.updateOne(
-      {
-        _id: id,
-      },
-      {
-        ...req.body,
-        $push: { updatedBy: updatedBy },
-      }
-    );
-    req.flash("success", `Cập nhật bài viết thành công!`);
-  } catch (error) {
-    req.flash("error", `Cập nhật bài viết thất bại!`);
+  const permissions = res.locals.role.permissions;
+  if (permissions.includes("posts_edit")) {
+        
+    const id = req.params.id;
+    try {
+      const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date(),
+      };
+      await Post.updateOne(
+        {
+          _id: id,
+        },
+        {
+          ...req.body,
+          $push: { updatedBy: updatedBy },
+        }
+      );
+      req.flash("success", `Cập nhật bài viết thành công!`);
+    } catch (error) {
+      req.flash("error", `Cập nhật bài viết thất bại!`);
+    }
+    // Điều hướng về url về trang danh sách sản phẩm
+    res.redirect(`back`);
+  } else {
+    res.send("403");
+    return;
   }
-  // Điều hướng về url về trang danh sách sản phẩm
-  res.redirect(`back`);
 };
 
 // [GET] /admin/posts/detail:id

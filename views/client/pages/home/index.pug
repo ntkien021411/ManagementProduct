@@ -1,7 +1,18 @@
 extends ../../layouts/default.pug
-//- include ../../mixins/alert.pug
-
+include ../../mixins/box-head.pug
+include ../../mixins/layout-grid.pug
 block main
-  //- +alertError(5000)
-  h1 Trang chủ
 
+  .section-products-featured-my-5 
+    .container  
+      .row  
+        .col-12.mt-5 
+          +box-head("Sản phẩm nổi bật")
+      +product-grid(productsFeatured)
+
+  .section-products-featured-my-5 
+    .container  
+      .row  
+        .col-12.mt-5 
+          +box-head("Sản phẩm mới nhất")
+      +product-grid(productsNew)

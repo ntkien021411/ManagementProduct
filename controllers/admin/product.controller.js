@@ -90,15 +90,21 @@ module.exports.changeStatus = async (req, res) => {
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
-  await Product.updateOne(
-    { _id: id },
-    {
-      status: status,
-      $push: { updatedBy: updatedBy },
-    }
-  );
-  req.flash("success", "Cập nhật trạng thái thành công!");
-  res.redirect("back");
+  if(permissions.includes("products_edit")){
+
+    await Product.updateOne(
+      { _id: id },
+      {
+        status: status,
+        $push: { updatedBy: updatedBy },
+      }
+    );
+    req.flash("success", "Cập nhật trạng thái thành công!");
+    res.redirect("back");
+  }else{
+    res.send("403");
+    return;
+  }
 };
 // [PATCH] /admin/products/change-multi/
 // giữa trên form body để dùng req.body
@@ -109,28 +115,44 @@ module.exports.changeMulti = async (req, res) => {
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
+  const permissions = res.locals.role.permissions;
+
   switch (type) {
     case "active":
-      await Product.updateMany(
-        { _id: { $in: ids } },
-        { status: "active", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`
-      );
-      break;
+      if(permissions.includes("products_edit")){
+
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          { status: "active", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`
+        );
+        break;
+      }else{
+        res.send("403");
+        return;
+      }
     case "inactive":
-      await Product.updateMany(
-        { _id: { $in: ids } },
-        { status: "inactive", $push: { updatedBy: updatedBy } }
-      );
-      req.flash(
-        "success",
-        `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`
-      );
-      break;
+      if(permissions.includes("products_edit")){
+
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          { status: "inactive", $push: { updatedBy: updatedBy } }
+        );
+        req.flash(
+          "success",
+          `Cập nhật trạng thái thành công ${ids.length} sản phẩm!`
+        );
+        break;
+      }else{
+        res.send("403");
+        return;
+      }
     case "delete-all": //xóa mềm
+    if(permissions.includes("products_delete")){
+
       await Product.updateMany(
         { _id: { $in: ids } },
         {
@@ -143,7 +165,13 @@ module.exports.changeMulti = async (req, res) => {
       );
       req.flash("success", `Xóa thành công ${ids.length} sản phẩm!`);
       break;
+    }else{
+      res.send("403");
+      return;
+    }
     case "change-position": //Thay đổi vị trí
+    if(permissions.includes("products_edit")){
+
       for (const item of ids) {
         // phần tử gồm 1 chuỗi id-position
         let [id, position] = item.split("-");
@@ -162,13 +190,19 @@ module.exports.changeMulti = async (req, res) => {
         `Cập nhật vị trí thành công ${ids.length} sản phẩm!`
       );
       break;
+    }else{
+      res.send("403");
+      return;
+    }
   }
   res.redirect("back");
 };
 
 //[DELETE] /admin/products/delete/:id
 module.exports.deleteOneItem = async (req, res) => {
-  const id = req.params.id;
+  const permissions = res.locals.role.permissions;
+  if(permissions.includes("products_delete")){
+    const id = req.params.id;
   //Xóa mềm là chỉ update trường delete bằng true
   // cập nhật thêm thời gian xóa là thời gian user bấm nút delete(thời gian hiện tại)
 
@@ -185,6 +219,11 @@ module.exports.deleteOneItem = async (req, res) => {
 
   req.flash("success", `Xóa sản phẩm thành công!`);
   res.redirect("back");
+  }else{
+    res.send("403");
+    return;
+  }
+  
 };
 
 // [GET] /admin/products/create
@@ -202,28 +241,36 @@ module.exports.createPage = async (req, res) => {
 };
 // [POST] /admin/products/create
 module.exports.createItem = async (req, res) => {
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
-
-  if (req.body.position == "") {
-    const countProducts = await Product.countDocuments();
-    req.body.position = countProducts + 1;
-  } else {
-    req.body.position = parseInt(res.body.position);
+  const permissions = res.locals.role.permissions;
+  if(permissions.includes("products_create")){
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+  
+    if (req.body.position == "") {
+      const countProducts = await Product.countDocuments();
+      req.body.position = countProducts + 1;
+    } else {
+      req.body.position = parseInt(res.body.position);
+    }
+    // console.log(req.body);
+    //Tạo mới và lưu 1 sản phẩm vào db
+    req.body.createdBy = {
+      //res.locals.user.id dùng cả view lẫn controller
+      account_id: res.locals.user.id,
+    };
+    const product = new Product(req.body);
+    await product.save();
+  
+    // Điều hướng về url về trang danh sách sản phẩm
+    req.flash("success", `Tạo mới sản phẩm thành công!`);
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  }else{
+    res.send("403");
+    return;
   }
-  // console.log(req.body);
-  //Tạo mới và lưu 1 sản phẩm vào db
-  req.body.createdBy = {
-    //res.locals.user.id dùng cả view lẫn controller
-    account_id: res.locals.user.id,
-  };
-  const product = new Product(req.body);
-  await product.save();
 
-  // Điều hướng về url về trang danh sách sản phẩm
-  req.flash("success", `Tạo mới sản phẩm thành công!`);
-  res.redirect(`${systemConfig.prefixAdmin}/products`);
+ 
 };
 
 // [GET] /admin/products/edit:id
@@ -251,31 +298,38 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/products/edit:id
 module.exports.editPatch = async (req, res) => {
-  const id = req.params.id;
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
-  // console.log(req.body);
-  try {
-    const updatedBy = {
-      account_id: res.locals.user.id,
-      updatedAt: new Date(),
-    };
-    await Product.updateOne(
-      {
-        _id: id,
-      },
-      {
-        ...req.body,
-        $push: { updatedBy: updatedBy },
-      }
-    );
-    req.flash("success", `Cập nhật sản phẩm thành công!`);
-  } catch (error) {
-    req.flash("error", `Cập nhật thất bại!`);
+  const permissions = res.locals.role.permissions;
+  if(permissions.includes("products_edit")){
+    const id = req.params.id;
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+    // console.log(req.body);
+    try {
+      const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date(),
+      };
+      await Product.updateOne(
+        {
+          _id: id,
+        },
+        {
+          ...req.body,
+          $push: { updatedBy: updatedBy },
+        }
+      );
+      req.flash("success", `Cập nhật sản phẩm thành công!`);
+    } catch (error) {
+      req.flash("error", `Cập nhật thất bại!`);
+    }
+    // Điều hướng về url về trang danh sách sản phẩm
+    res.redirect(`back`);
+  }else{
+    res.send("403");
+    return;
   }
-  // Điều hướng về url về trang danh sách sản phẩm
-  res.redirect(`back`);
+ 
 };
 
 // [GET] /admin/products/detail:id
