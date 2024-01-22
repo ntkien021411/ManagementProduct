@@ -1,26 +1,34 @@
 extends ../../layouts/default.pug
-
+include ../../mixins/box-head.pug
 block main
-    .container.my-3
-        .row
-            .col-12
-                if(blog.title)
-                    h1(class="mb-4") #{blog.title}
+    .product-detail 
+        .container.my-3
+            .row
+                .col-6 
+                    .inner-thumb
+                    img(src=blog.thumbnail,alt=blog.title 
+                    width="90%")
+                .col-5.margin-left
+                    h1(class="inner-title") #{blog.title}
 
-    
-                if(blog.description)
-                    div(class="mb-4") <b>!{blog.description} </b>
+                    if(blog.postCategory)
+                        div(class="inner-category")
+                        span Thể loại: 
+                        a(href=`/blogs/${blog.postCategory.slug}`) #{blog.postCategory.title}
+                    
+                    if(blog.position)
+                         div(class="inner-stock") Vị trí: <span>#{blog.position}</span> 
 
-                
-                if(blog.thumbnail)
-                    div(class="mb-4")
-                        img(
-                            src=blog.thumbnail 
-                            style="width:100px"
-                        )
+                    
+        hr
 
-                if(blog.position)
-                div(class="mb-4") Vị trí: <b>#{blog.position}</b>
-                
-                if(postCategory.title)
-                div(class="mb-4") <b>!{postCategory.title}</b> 
+        .container.my-5 
+            .row 
+                .col-12 
+                    +box-head("Mô tả bài viết ngắn gọn")
+                    .inner-desc !{blog.description} 
+        .container.my-5 
+            .row 
+                .col-12 
+                    +box-head("Mô tả bài viết chi tiết")
+                    .inner-desc !{blog.content} 

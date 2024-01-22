@@ -10,7 +10,7 @@ module.exports.index =  async (req, res) => {
     status : "active"
   };
   
-  const products = await Product.find(find).limit(6)
+  const products = await Product.find(find).limit(9)
   const newProducts = priceNewProducts.priceNewProducts(products);
   // console.log(newRecords);
 

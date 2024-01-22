@@ -2,6 +2,7 @@ const Product = require("../../models/product.model");
 const priceNewProducts = require("../../helpers/product");
 const ProductCategory = require("../../models/product-category.model");
 const subCategory = require("../../helpers/products-category");
+const priceNewProduct = require("../../helpers/product");
 // [GET] /products
 module.exports.index = async (req, res) => {
   // find với Aggregation Operations
@@ -43,18 +44,29 @@ module.exports.category = async (req, res) => {
     res.send("404")
   }
 };
-// [GET] /products/:slug
+// [GET] /products/detail/:slugProduct
 module.exports.detail = async (req, res) => {
 
   try {
     let find = {
       deleted: false,
-      slug: req.params.slug,
+      slug: req.params.slugProduct,
       status:"active"
     };
+    
 
     const product = await Product.findOne(find);
-
+    if(product.product_category_id){
+      const category = await ProductCategory.findOne({
+        _id : product.product_category_id,
+        deleted : false,
+        status : "active",
+      });
+      product.category=category;
+      // console.log(product);
+    }
+    product.priceNew =priceNewProduct.priceNewProduct(product);
+    // console.log(product);
     res.render("client/pages/products/detail", {
       title: product.title,
       product: product,

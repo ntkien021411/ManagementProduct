@@ -1,5 +1,6 @@
 const PostCategory = require("../../models/post-category.model");
 const Post = require("../../models/post.model");
+const subCategory = require("../../helpers/products-category");
 // [GET] /blogs
 module.exports.index = async (req, res) => {
   const posts = await Post.find({
@@ -9,14 +10,13 @@ module.exports.index = async (req, res) => {
   for (const item of posts) {
     //Lấy ra thông tin người tạo
     const postCategory = await PostCategory.findOne({
-        _id: item.post_category_id,
-      });
+      _id: item.post_category_id,
+    });
     if (postCategory) {
       item.postCategory = postCategory;
     }
-    
   }
-//   console.log(posts);
+  //   console.log(posts);
   res.render("client/pages/blogs/index", {
     title: "Danh sách bài viết",
     posts: posts,
@@ -26,55 +26,58 @@ module.exports.index = async (req, res) => {
 // [GET] /blogs/:slugCategory
 module.exports.category = async (req, res) => {
   const category = await PostCategory.findOne({
-    slug : req.params.slugCategory,
-    deleted : false
+    slug: req.params.slugCategory,
+    deleted: false,
   });
   try {
-
+    const listSubCategory = await subCategory.getSubCategoryPost(category.id);
+    const listSubCategoryId = listSubCategory.map((item) => item.id);
     const posts = await Post.find({
       deleted: false,
-      post_category_id:category.id
+      post_category_id: { $in: [category.id, ...listSubCategoryId] },
     }).sort({ position: "desc" });
-   if(posts){
-    for (const item of posts) {
-      //Lấy ra thông tin người tạo
-      const postCategory = await PostCategory.findOne({
+    if (posts) {
+      for (const item of posts) {
+        //Lấy ra thông tin người tạo
+        const postCategory = await PostCategory.findOne({
           _id: item.post_category_id,
         });
-      if (postCategory) {
-        item.postCategory = postCategory;
+        if (postCategory) {
+          item.postCategory = postCategory;
+        }
       }
-      
     }
-   }
     res.render("client/pages/blogs/index", {
       title: category.title,
       posts: posts,
     });
   } catch (error) {
-    res.send("404")
+    res.send("404");
   }
 };
 
-// [GET] /blogs/:slug
+// [GET] /blogs/detail/:slugPost
 module.exports.detail = async (req, res) => {
-
   try {
     let find = {
       deleted: false,
-      slug: req.params.slug,
-      status:"active"
+      slug: req.params.slugPost,
+      status: "active",
     };
 
     const blog = await Post.findOne(find);
-    const postCategory = await PostCategory.findOne({
+    if (blog.post_category_id) {
+      const postCategory = await PostCategory.findOne({
         _id: blog.post_category_id,
+        deleted: false,
+        status: "active",
       });
-     
+      blog.postCategory = postCategory;
+    }
+    // console.log(blog);
     res.render("client/pages/blogs/detail", {
       title: blog.title,
       blog: blog,
-      postCategory:postCategory
     });
   } catch (error) {
     res.redirect(`/blogs`);

@@ -13,7 +13,7 @@ router.get("/",controller.index);
 router.get("/:slugCategory",controller.category);
 
 
-// router.get("/:slug",controller.detail);
+router.get("/detail/:slugProduct",controller.detail);
 
 // sau khi tạo phải export router ra để nhúng ở file index hoặc file khác để dùng
 module.exports = router;
