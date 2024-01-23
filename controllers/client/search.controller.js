@@ -1,7 +1,7 @@
 const Product = require("../../models/product.model");
 const searchHelper = require("../../helpers/search");
 const priceNewProducts = require("../../helpers/product");
-// [GET] /search
+// [GET] /search?keyword=...
 module.exports.index =  async (req, res) => {
   //OBJECT BỘ LỌC VÀ TÌM KIẾM data TRONG MONGODB
   let find = {

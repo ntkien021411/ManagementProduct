@@ -187,8 +187,56 @@ header {
   display: inline-block;
 }
 
+.product-detail .inner-percent{
+      font-size: 14px;
+        font-weight: 600;
+        color: white;
+        background: red;
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 8px;
+}
 /* End product-detail */
 
 .margin-left{
   margin-left: 30px;
 }
+
+
+/* Alert */
+[show-alert]{
+  position: fixed;
+  top: 70px;
+  right: 15px;
+  z-index: 9999;
+}
+[show-alert].alert-hidden{
+  animation-name: alert-hidden;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+@keyframes alert-hidden {
+  from{
+      right: 15px;
+  }
+  to{
+      right: -100%;
+      display: none;
+  }
+}
+
+/* Close Alert */
+[show-alert] [close-alert]{
+  background: #ffffffc4;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-weight: 600;
+  border-radius: 50%;
+  cursor: pointer;
+}
+/* End Close Alert */
+
+/* End Alert*/
