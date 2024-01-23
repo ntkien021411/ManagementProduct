@@ -22,6 +22,5 @@ mixin post-item(item)
               h3.inner-title #{item.title}
                 a(href=`/blogs/detail/${item.slug}`
                   ) #{item.title}
-            .inner-price-new !{item.description}
               if(item.postCategory.title)
                 .inner-price-new #{item.postCategory.title}
