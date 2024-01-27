@@ -67,7 +67,7 @@ module.exports.index = async (req, res) => {
 };
 
 
-// [POST] /cart/delete/:productId
+// [GET] /cart/delete/:productId
 module.exports.delete = async (req, res) => {
   const cartId = req.cookies.cartId;
   const productId = req.params.productId;
@@ -81,7 +81,7 @@ module.exports.delete = async (req, res) => {
   res.redirect(`back`);
 };
 
-// [POST] /cart/update/:productId/:quantity
+// [GET] /cart/update/:productId/:quantity
 module.exports.update = async (req, res) => {
   const cartId = req.cookies.cartId;
   const productId = req.params.productId;
