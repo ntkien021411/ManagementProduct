@@ -36,3 +36,5 @@ header.header
                             -const pathBlog ="/blogs";
                             a(href=pathBlog) Blog
                                 +sub-menu(layoutPosts,pathBlog)
+                        li
+                            a(href="/cart") Giỏ hàng (#{miniCart ? miniCart.totalQuantity : "0"})

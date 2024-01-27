@@ -12,6 +12,14 @@ module.exports.cartId = async (req, res, next) => {
 
     }else{
         //Khi đã có giỏ hàng
+        const cart = await Cart.findOne({
+            _id : req.cookies.cartId
+        });
+        // cart.totalQuantity = cart.products.reduce((sum , item) => sum + item.quantity, 0); // tổng số lượng của từng sản phẩm
+        cart.totalQuantity = cart.products.length; // tổng số sản phẩm
+
+        // console.log(cart.products.length);
+        res.locals.miniCart = cart;
     }
     
       
