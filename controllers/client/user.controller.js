@@ -1,4 +1,6 @@
 const User = require("../../models/user.model");
+const ForgotPassword = require("../../models/forgot-password.model");
+const generateToken = require("../../helpers/generateToken");
 var md5 = require("md5");
 
 // [GET] /user/register
@@ -67,8 +69,78 @@ module.exports.loginPatch = async (req, res) => {
   res.redirect(`/`);
 };
 
-// [GET] user/logout
+// [GET] /user/logout
 module.exports.logout = (req, res) => {
   res.clearCookie("tokenUser");
   res.redirect(`/`);
+};
+
+// [GET] /user/password/forgot
+module.exports.forgotPassword = (req, res) => {
+  res.render("client/pages/user/forgot-password", {
+    title: "Lấy lại mật khẩu",
+  });
+};
+
+
+// [POST] /user/password/forgot
+module.exports.forgotPasswordPatch = async (req, res) => {
+  const email = req.body.email;
+  const user = await User.findOne({
+    email: req.body.email,
+    deleted: false,
+  });
+  if (!user) {
+    req.flash("error", `Email không tồn tại!`);
+    res.redirect(`back`);
+    return;
+  }
+  //Việc : tạo mã OTP và lưu OTP , email vào db
+  const objectForgotPassword = {
+    email : email,
+    otp : generateToken.generateRandomSNumber(8),
+    expireAt : Date.now()
+  };
+  const forgot_password = new ForgotPassword(objectForgotPassword);
+  await forgot_password.save();
+
+  //Việc 2 : gửi mã otp qua email
+
+
+  res.redirect(`/user/password/otp?email=${email}`);
+};
+
+// [GET] /user/password/otp?email=...
+module.exports.otp = (req, res) => {
+  const email =req.query.email;
+  res.render("client/pages/user/otp-password", {
+    title: "Nhập mã otp",
+    email : email
+  });
+};
+
+// [POST] /user/password/otp
+module.exports.otpPatch = async (req, res) => {
+  const email =req.body.email;
+  const otp =req.body.otp;
+  
+  const result = await ForgotPassword.findOne({
+      email:email,
+      otp : otp
+  });
+
+  if (!result) {
+    req.flash("error", `OTP không hợp lệ!`);
+    res.redirect(`back`);
+    return;
+  }
+  const user =await User.findOne({
+    email:email
+  });
+  res.cookie("tokenUser", user.tokenUser);
+  
+  console.log(result);
+  res.send("ok");
+  // res.redirect("/user/password/reset");
+
 };
