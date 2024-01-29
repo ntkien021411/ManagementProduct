@@ -1,0 +1,17 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+block main
+  .container.my-3
+   .row
+      .col-12
+        +box-head("Thông tin tài khoản")
+
+        if(user.fullName)
+            h5(class="mb-4") Họ tên:  #{user.fullName}
+        if(user.email)
+            h5(class="mb-4") Email: #{user.email}
+        
+        
+
+   
+

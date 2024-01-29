@@ -3,6 +3,7 @@ const ForgotPassword = require("../../models/forgot-password.model");
 const generateToken = require("../../helpers/generateToken");
 var md5 = require("md5");
 const sendMailHelper = require("../../helpers/sendMail");
+const Cart= require("../../models/cart.model");
 // [GET] /user/register
 module.exports.register = async (req, res) => {
   res.render("client/pages/user/register", {
@@ -66,6 +67,13 @@ module.exports.loginPatch = async (req, res) => {
   res.cookie("tokenUser", user.tokenUser, {
     expires: new Date(Date.now() + expiresTime),
   });
+
+  await Cart.updateOne({
+    _id : req.cookies.cartId
+  },{
+    user_id : user.id
+  });
+
   res.redirect(`/`);
 };
 
@@ -171,4 +179,13 @@ module.exports.resetPasswordPatch = async (req, res) => {
   });
   res.clearCookie("tokenUserReset");
   res.redirect("/");
+};
+
+
+// [GET] /user/info
+module.exports.info = async (req, res) => {
+  res.render("client/pages/user/info", {
+    title: "Thông tin tài khoản"
+  });
+
 };
