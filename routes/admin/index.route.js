@@ -10,6 +10,8 @@ const postRoutes = require('./post.route');
 //Login 
 const authRoutes = require('./auth.route');
 
+//setting
+const settingRoutes = require('./setting.route');
 //Middleware for route private (phải đăng nhập mới được truy cập vào route)
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
@@ -36,5 +38,8 @@ module.exports = (app) => {
   app.use(PATH_ADMIN+"/my-account",authMiddleware.requireAuth,myAccountsRoutes);
   //Login 
   app.use(PATH_ADMIN+"/auth", authRoutes);
+  
+  //settings-general
+  app.use(PATH_ADMIN+"/settings", authMiddleware.requireAuth,settingRoutes);
 
 };

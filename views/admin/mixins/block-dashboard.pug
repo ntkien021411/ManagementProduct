@@ -1,0 +1,8 @@
+mixin block(data,title)
+    .col-6
+        .card.mb-4 
+            .card-header #{title}
+            .card-body 
+                p Số lượng: <b>#{data.total}</b> 
+                p Hoạt động: <b>#{data.active}</b> 
+                p Dừng hoạt động: <b>#{data.inactive}</b> 
