@@ -63,6 +63,14 @@ routeAdmin(app);
 const systemConfig = require("./config/system");
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
+//các trường hợp còn lại
+app.get("*", (req,res) => {
+  res.render("client/pages/error/404", {
+    title: "404 Not Found"
+  });
+
+});
+
 
 
 app.listen(port, () => {
