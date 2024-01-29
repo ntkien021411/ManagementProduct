@@ -2,7 +2,7 @@ const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
 const generateToken = require("../../helpers/generateToken");
 var md5 = require("md5");
-
+const sendMailHelper = require("../../helpers/sendMail");
 // [GET] /user/register
 module.exports.register = async (req, res) => {
   res.render("client/pages/user/register", {
@@ -96,16 +96,21 @@ module.exports.forgotPasswordPatch = async (req, res) => {
     return;
   }
   //Việc : tạo mã OTP và lưu OTP , email vào db
+  const code = generateToken.generateRandomSNumber(8);
   const objectForgotPassword = {
     email : email,
-    otp : generateToken.generateRandomSNumber(8),
+    otp : code,
     expireAt : Date.now()
   };
   const forgot_password = new ForgotPassword(objectForgotPassword);
   await forgot_password.save();
 
-  //Việc 2 : gửi mã otp qua email
-
+  //Việc 2 : gửi mã otp qua email 
+  const subject = "Mã OTP xác minh lấy lại mật khẩu";
+  const html = `
+  Mã OTP xác minh lấy lại mật khẩu là <b>${code}</b>. Thời hạn sử dụng là 3 phút. Lưu ý không được để lộ mã OTP`; 
+  // console.log(email);
+  sendMailHelper.sendMail(email,subject,html);
 
   res.redirect(`/user/password/otp?email=${email}`);
 };
@@ -137,10 +142,33 @@ module.exports.otpPatch = async (req, res) => {
   const user =await User.findOne({
     email:email
   });
-  res.cookie("tokenUser", user.tokenUser);
+  res.cookie("tokenUserReset", user.tokenUser);
   
-  console.log(result);
-  res.send("ok");
-  // res.redirect("/user/password/reset");
+  // console.log(result);
+  // res.send("ok");
+  res.redirect("/user/password/reset");
 
+};
+
+// [GET] /user/password/reset
+module.exports.resetPassword = async (req, res) => {
+  res.render("client/pages/user/reset-password", {
+    title: "Đổi mật khẩu"
+  });
+
+};
+
+// [POST] /user/password/reset
+module.exports.resetPasswordPatch = async (req, res) => {
+  const password = req.body.password;
+
+  const tokenUser = req.cookies.tokenUserReset;
+
+  await User.updateOne({
+    tokenUser : tokenUser
+  },{
+    password : md5(password)
+  });
+  res.clearCookie("tokenUserReset");
+  res.redirect("/");
 };
