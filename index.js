@@ -1,6 +1,5 @@
 const express = require("express");
 
-
 //Nhúng express-flash để làm chức năng hiện thị thông báo
 var cookieParser = require('cookie-parser')
 const session = require('express-session');
@@ -10,6 +9,27 @@ var flash = require("express-flash");
 var bodyParser = require("body-parser");
 
 const app = express();
+//Sử dụng server SocketIO
+const { Server } = require("socket.io");
+const http = require('http');
+const server = http.createServer(app);
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  console.log(socket.id);
+  
+  // //Trả về client với cái tên và id của user
+  // //Gửi cho client
+  // socket.emit('SERVER_SEND_SOCKET_ID', socket.id);
+
+  // //Nhận từ client
+  // socket.on('CLIENT_SEND_MESSAGE', (msg) => {
+  //     console.warn("data " + msg);
+  //     socket.broadcast.emit('SERVER_RETURN_MESSAGE', msg);
+
+  //   });
+});
+
 
 //Dùng express-flash
 app.use(cookieParser("keyboard cat"));
@@ -72,7 +92,6 @@ app.get("*", (req,res) => {
 });
 
 
-
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
