@@ -14,21 +14,8 @@ const { Server } = require("socket.io");
 const http = require('http');
 const server = http.createServer(app);
 const io = new Server(server);
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  console.log(socket.id);
-  
-  // //Trả về client với cái tên và id của user
-  // //Gửi cho client
-  // socket.emit('SERVER_SEND_SOCKET_ID', socket.id);
-
-  // //Nhận từ client
-  // socket.on('CLIENT_SEND_MESSAGE', (msg) => {
-  //     console.warn("data " + msg);
-  //     socket.broadcast.emit('SERVER_RETURN_MESSAGE', msg);
-
-  //   });
-});
+//Tạo biến toàn cục dùng ở bất kì đâu trong app
+global._io = io;
 
 
 //Dùng express-flash

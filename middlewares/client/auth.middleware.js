@@ -13,6 +13,7 @@ module.exports.requireAuthUser = async (req, res, next) => {
     res.redirect(`/user/login`);
     return;
   }
+  //Set user local ở user client ròi
   // res.locals.user = user;
 
   next();

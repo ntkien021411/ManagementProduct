@@ -3,6 +3,7 @@ const router = express.Router();
 
 
 const controller = require("../../controllers/client/chat.controller");
+
 router.get("/",controller.index);
 
 // router.post("/add/:productId",controller.add);

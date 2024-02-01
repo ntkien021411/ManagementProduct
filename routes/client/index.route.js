@@ -14,6 +14,8 @@ const settingGeneralMiddleware = require("../../middlewares/client/setting.middl
 
 //Chat Socket IO
 const chatRoutes = require("./chat.route");
+const authMiddleware =  require("../../middlewares/client/auth.middleware");
+
 module.exports = (app) => {
   app.use(categoryMiddleware.category);
   app.use(cartMiddleware.cartId);
@@ -34,6 +36,6 @@ module.exports = (app) => {
   app.use("/checkout",checkoutRoutes);
 
   app.use("/user",userRoutes);
-
-  app.use("/chat",chatRoutes);
+  //Đăng nhập thì mới vào dc trang chat
+  app.use("/chat",authMiddleware.requireAuthUser,chatRoutes);
 };

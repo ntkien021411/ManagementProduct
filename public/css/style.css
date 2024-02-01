@@ -246,14 +246,13 @@ header {
 
 /* General chat container styling */
 .chat {
-  overflow-y: auto; /* Enable scrolling for chat content */
-  height: 400px; /* Adjust height as needed */
+  overflow-y: auto; 
+  height: 400px; 
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
 }
 
-/* Incoming messages */
 .inner-incoming {
   display: flex;
   align-items: flex-start;
@@ -271,7 +270,6 @@ header {
   margin-bottom: 10px;
 }
 
-/* Outgoing messages */
 .inner-outgoing .inner-content {
   background-color: #e0e0e0;
   padding: 10px;
@@ -279,7 +277,6 @@ header {
   margin-bottom: 10px;
 }
 
-/* Chat input area */
 .inner-foot {
   display: flex;
   align-items: center;
@@ -296,7 +293,7 @@ header {
 }
 
 .inner-form button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -304,7 +301,6 @@ header {
   cursor: pointer;
 }
 
-/* Font Awesome icon styling */
 .fa-solid.fa-paper-plane {
   margin-left: 5px;
 }
