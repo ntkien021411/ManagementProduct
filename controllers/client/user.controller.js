@@ -167,7 +167,7 @@ module.exports.resetPassword = async (req, res) => {
 };
 
 // [POST] /user/password/reset
-module.exports.resetPasswordPatch = async (req, res) => {
+module.exports. resetPasswordPatch = async (req, res) => {
   const password = req.body.password;
 
   const tokenUser = req.cookies.tokenUserReset;

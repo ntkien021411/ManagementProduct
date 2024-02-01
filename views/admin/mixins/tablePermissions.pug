@@ -89,6 +89,11 @@ mixin tableRole(records)
             each item in records 
                 td(class="text-center")
                     input(type="checkbox")
+    tr(data-name="roles_settings_general")
+        td Chỉnh sửa chung 
+            each item in records 
+                td(class="text-center")
+                    input(type="checkbox")
 
 
 mixin tableAccount(records)
@@ -176,3 +181,30 @@ mixin tablePostCategory(records)
                     input(type="checkbox")
                     
                     
+mixin tableAccountClient(records)
+    tr
+        td(colspan="4")
+            b Tài khoản người dùng
+    tr(data-name="client_view")
+        td Xem
+            each item in records 
+                td(class="text-center")
+                    input(type="checkbox")
+                
+    tr(data-name="client_create")
+        td Thêm mới 
+            each item in records 
+                td(class="text-center")
+                    input(type="checkbox")
+
+    tr(data-name="client_edit")
+        td Chỉnh sửa 
+            each item in records 
+                td(class="text-center")
+                    input(type="checkbox")
+
+    tr(data-name="client_delete")
+        td Xóa 
+            each item in records 
+                td(class="text-center")
+                    input(type="checkbox")

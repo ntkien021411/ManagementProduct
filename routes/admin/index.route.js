@@ -15,6 +15,9 @@ const settingRoutes = require('./setting.route');
 //Middleware for route private (phải đăng nhập mới được truy cập vào route)
 const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
+const userRoutes = require('./users.route');
+// const settingRoutes = require('./setting.route');
+
 const myAccountsRoutes = require('./my-account.route');
 module.exports = (app) => {
   const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -41,5 +44,9 @@ module.exports = (app) => {
   
   //settings-general
   app.use(PATH_ADMIN+"/settings", authMiddleware.requireAuth,settingRoutes);
+
+  //  app.use(PATH_ADMIN+"/orders", authMiddleware.requireAuth,settingRoutes);
+
+  app.use(PATH_ADMIN+"/users",authMiddleware.requireAuth,userRoutes);
 
 };

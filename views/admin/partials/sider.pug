@@ -24,5 +24,11 @@
             if(role.permissions.includes("posts_view"))
                 li 
                     a(href=`${prefixAdmin}/posts`) Danh sách bài viết
-            li 
-                a(href=`${prefixAdmin}/settings/general`) Cài đặt chung
+            if(role.permissions.includes("roles_settings_general"))
+                li 
+                    a(href=`${prefixAdmin}/settings/general`) Cài đặt chung
+            //- li 
+            //-     a(href=`${prefixAdmin}/orders`) Danh sách đon hàng
+            if(role.permissions.includes("client_view"))
+                li 
+                    a(href=`${prefixAdmin}/users`) Danh sách tài khoản người dùng

@@ -317,10 +317,10 @@ module.exports.changeMulti = async (req, res) => {
         );
         req.flash("success", `Xóa thành công ${ids.length} tài khoản!`);
         break;
-        res.redirect("back");
       } else {
         res.send("403");
         return;
       }
-  }
+    }
+    res.redirect("back");
 };

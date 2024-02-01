@@ -1,0 +1,29 @@
+extends ../../layouts/default.pug
+
+block main
+    if(record.fullName)
+        h5(class="mb-4") Họ tên:  #{record.fullName}
+    if(record.email)
+        h5(class="mb-4") Email: #{record.email}
+    if(record.phone)
+        h5(class="mb-4") Số điện thoại: #{record.phone}
+    if(record.password)
+        h5(class="mb-4") Mật khẩu: #{record.password}
+
+    if(record.avatar)
+        div(class="mb-4")
+            img(
+                src=record.avatar 
+                style="width:300px"
+            )
+   
+    if(record.status)
+        div(class="mb-4")
+            span Trạng thái: 
+            if(record.status === "active")
+                span(class="badge badge-success") Hoạt động 
+            else 
+                span(class="badge badge-danger") Dừng hoạt động   
+    if(role.permissions.includes("client_edit")) 
+        a(href=`${prefixAdmin}/users/edit/${record.id}`
+                        class="btn btn-warning btn-sm") Chỉnh sửa   
