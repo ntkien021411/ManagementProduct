@@ -11,6 +11,9 @@ const userRoutes = require("./user.route");
 const userMiddleware = require("../../middlewares/client/user.middleware");
 
 const settingGeneralMiddleware = require("../../middlewares/client/setting.middleware");
+
+//Chat Socket IO
+const chatRoutes = require("./chat.route");
 module.exports = (app) => {
   app.use(categoryMiddleware.category);
   app.use(cartMiddleware.cartId);
@@ -31,4 +34,6 @@ module.exports = (app) => {
   app.use("/checkout",checkoutRoutes);
 
   app.use("/user",userRoutes);
+
+  app.use("/chat",chatRoutes);
 };

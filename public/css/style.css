@@ -240,3 +240,72 @@ header {
 /* End Close Alert */
 
 /* End Alert*/
+
+
+/*Chat */
+
+/* General chat container styling */
+.chat {
+  overflow-y: auto; /* Enable scrolling for chat content */
+  height: 400px; /* Adjust height as needed */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Incoming messages */
+.inner-incoming {
+  display: flex;
+  align-items: flex-start;
+}
+
+.inner-incoming .inner-name {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.inner-incoming .inner-content {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* Outgoing messages */
+.inner-outgoing .inner-content {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* Chat input area */
+.inner-foot {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.inner-form input[type="text"] {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.inner-form button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Font Awesome icon styling */
+.fa-solid.fa-paper-plane {
+  margin-left: 5px;
+}
+/*End Chat  */
