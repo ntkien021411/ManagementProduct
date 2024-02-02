@@ -9,7 +9,7 @@ block main
 
         .row 
             .col-12 
-                .chat 
+                .chat(my-id=user.id)
                     .inner-body 
                         each chat, index in chats
                             div(class=(chat.infoUser.id == user.id ? "inner-outgoing" : "inner-incoming"))
