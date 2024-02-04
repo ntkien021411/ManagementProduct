@@ -7,6 +7,7 @@ module.exports.index = async (req, res) => {
 
   //Socket.IO
   _io.once("connection", (socket) => {
+    //người dùng gửi tin nhắn
     socket.on("CLIENT_SEND_MESSAGE",async (content) => {
         //Lưu vào database
       const chat = new Chat(
@@ -25,6 +26,18 @@ module.exports.index = async (req, res) => {
             content : content
         } )
     });
+
+    // người dùng đánh máy 
+    socket.on("CLIENT_SEND_TYPING",async (type) => {
+      
+      socket.broadcast.emit('SERVER_RETURN_TYPING', {
+        userId : userId,
+        fullName : fullName,
+        type :type
+    });
+
+    });
+
   });
 
   //Lấy ra data chat
