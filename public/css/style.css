@@ -247,7 +247,7 @@ header {
 /* General chat container styling */
 .chat {
   overflow-y: auto; 
-  height: 400px; 
+  max-height: 400px; 
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
@@ -285,6 +285,7 @@ header {
 }
 
 .inner-form input[type="text"] {
+  width: 900px;
   flex-grow: 1;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -305,3 +306,13 @@ header {
   margin-left: 5px;
 }
 /*End Chat  */
+
+
+/* Emoji picker */
+.tooltip:not(.shown) {
+  visibility: hidden;
+}
+.tooltip.shown {
+  visibility: visible;
+  opacity: 1;
+}

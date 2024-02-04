@@ -19,8 +19,15 @@ const userRoutes = require('./users.route');
 // const settingRoutes = require('./setting.route');
 
 const myAccountsRoutes = require('./my-account.route');
+
+
+const controller = require("../../controllers/admin/auth.controller");
+
+
 module.exports = (app) => {
   const PATH_ADMIN = systemConfig.prefixAdmin;
+
+  app.get(PATH_ADMIN, controller.loginPage);
 
   app.use(PATH_ADMIN+"/dashboard",authMiddleware.requireAuth,dashboardRoutes);
   

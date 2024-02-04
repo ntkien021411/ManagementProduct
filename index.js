@@ -9,6 +9,9 @@ var flash = require("express-flash");
 var bodyParser = require("body-parser");
 
 const app = express();
+
+
+
 //Sử dụng server SocketIO
 const { Server } = require("socket.io");
 const http = require('http');

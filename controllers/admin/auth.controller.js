@@ -12,7 +12,7 @@ module.exports.loginPage = async (req, res) => {
       res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
     }else{
       // console.log(123);
-      res.redirect(`http://localhost:3000/products`);
+      res.redirect(`404`);
       return;
     }
   } else {
@@ -59,5 +59,5 @@ module.exports.login = async (req, res) => {
 // [GET] /admin/auth/logout
 module.exports.logout = (req, res) => {
   res.clearCookie("token");
-  res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
+  res.redirect(`${systemConfig.prefixAdmin}`);
 };
