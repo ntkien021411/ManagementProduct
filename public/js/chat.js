@@ -1,12 +1,17 @@
+// File upload with preview
+const upload = new FileUploadWithPreview.FileUploadWithPreview('upload-image',{
+  multiple:true,
+  maxFileCount : 6
+});
 // CLIENT_SEND_MESSAGE
 const formSendData = document.querySelector(".chat");
 if (formSendData) {
   formSendData.addEventListener("submit", (e) => {
     e.preventDefault();
-
+    const images = upload.cacheFileArray || [];
     const content = e.target.elements.content.value;
-    if (content) {
-      //Người dùng gửi tin nhắn
+    if (content || images.length > 0) {
+      //Người dùng gửi tin nhắn hoặc gửi kèm ảnh
       socket.emit("CLIENT_SEND_MESSAGE", content);
       e.target.elements.content.value = "";
       socket.emit("CLIENT_SEND_TYPING", "hidden");
@@ -131,3 +136,4 @@ if (elementListTyping) {
     
   });
 }
+
