@@ -67,6 +67,13 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
 
   //Scroll chat to bottom
   bodyChat.scrollTop = bodyChat.scrollHeight;
+
+  //Preview Image
+  const boxImages = div.querySelector(".inner-images");
+  if(boxImages){
+
+    const gallery = new Viewer(boxImages);
+  }
 });
 
 //Scroll chat to bottom
@@ -161,3 +168,4 @@ if (elementListTyping) {
   });
 }
 
+const galary = new Viewer(document.querySelector(".chat .inner-body"))
