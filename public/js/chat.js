@@ -8,12 +8,17 @@ const formSendData = document.querySelector(".chat");
 if (formSendData) {
   formSendData.addEventListener("submit", (e) => {
     e.preventDefault();
-    const images = upload.cacheFileArray || [];
+    const images = upload.cachedFileArray || [];
     const content = e.target.elements.content.value;
     if (content || images.length > 0) {
+      // console.log(images);
       //Người dùng gửi tin nhắn hoặc gửi kèm ảnh
-      socket.emit("CLIENT_SEND_MESSAGE", content);
+      socket.emit("CLIENT_SEND_MESSAGE", {
+        content : content,
+        images :images
+      });
       e.target.elements.content.value = "";
+      upload.resetPreviewPanel();
       socket.emit("CLIENT_SEND_TYPING", "hidden");
     }
   });
@@ -27,16 +32,35 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
   const body = document.querySelector(".chat .inner-body");
 
   const div = document.createElement("div");
+
   let htmlFullName = "";
+  let htmlContent = "";
+  let htmlImages = "";
+
+  if(data.content){
+    htmlContent = `<div class="inner-content">${data.content}</div>`;
+  }
+
+  if(data.images.length > 0){
+    htmlImages += `<div class="inner-images">`;
+      for (const image of data.images) {
+        htmlImages +=` <img src="${image}">`;
+      }
+    htmlImages +=`</div>`;
+  }
+
+
   if (myId == data.userId) {
     div.classList.add("inner-outgoing");
   } else {
     div.classList.add("inner-incoming");
     htmlFullName = `<div class="inner-name">${data.fullName}</div>`;
   }
+
   div.innerHTML = `
     ${htmlFullName}
-    <div class="inner-content">${data.content}</div>`;
+    ${htmlContent}
+    ${htmlImages}`;
 
     const boxTyping = document.querySelector(".inner-list-typing");
   body.insertBefore(div,boxTyping);

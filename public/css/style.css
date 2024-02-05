@@ -289,7 +289,7 @@ header {
 }
 
 .inner-form input[type="text"] {
-  width: 900px;
+  width: 600px;
   flex-grow: 1;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -308,6 +308,39 @@ header {
 
 .fa-solid.fa-paper-plane {
   margin-left: 5px;
+}
+.chat .inner-body .inner-images img {
+width: 150px;
+height: 150px;
+object-fit: contain;
+background: #efefef;
+padding: 10px;
+margin: 0 5px 5px 0;
+border-radius: 5px;
+
+}
+
+.chat .inner-preview-images{
+  position: relative;
+}
+.chat .inner-preview-images .label-container{
+  display: none;
+}
+.chat .inner-preview-images .input-container{
+  display: none;
+}
+
+.chat .inner-preview-images .image-preview{
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+
+}
+
+.chat .inner-preview-images .image-preview-item{
+ width: 90px;
+ background-size: contain;
+  
 }
 /*End Chat  */
 
