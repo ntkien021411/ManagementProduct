@@ -28,12 +28,12 @@ module.exports.index = async (req, res) => {
       find.fullName = objectSearch.regex;
     }
     //Total Page :
-    let countProducts = await Account.countDocuments(find);
+    let countProducts = await User.countDocuments(find);
     //PAGINATION
     let objectPagination = paginationHelper(
       req.query,
       {
-        limitItem: 6,
+        limitItem: 3,
         currentPage: 1,
       },
       countProducts

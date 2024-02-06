@@ -28,4 +28,11 @@ router.post("/password/reset",validate.resetPass,controller.resetPasswordPatch);
 
 router.get("/info",authMiddleware.requireAuthUser ,controller.info);
 
+
+const multer = require("multer");
+const upload = multer();
+const uploadCLoud = require("../../middlewares/admin/uploadImageCloud.middleware");
+router.patch("/info/:id",upload.single("avatar"),
+uploadCLoud.uploadImageCloudinary ,controller.infoPatch);
+
 module.exports = router;

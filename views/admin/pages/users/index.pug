@@ -91,14 +91,19 @@ block main
                       else 
                         button( class="badge badge-danger") Dừng hoạt động
                   td 
-                    p #{item.accountFullName}
                     if(item.accountFullName)
+                      p #{item.accountFullName}
                       +formatDateTime(item.createdBy.createdAt)
+                    else
+                      p Tự đăng ký
+                    
                   td 
                     -const updatedBy = item.updatedBy.slice(-1)[0];
                     if(updatedBy)
                       p #{updatedBy.accountFullName}
                       +formatDateTime(updatedBy.updatedAt)
+                    else
+                      p Tự đăng ký
                   td
                     
                     a(href=`${prefixAdmin}/users/detail/${item.id}`
