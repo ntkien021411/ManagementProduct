@@ -27,7 +27,6 @@ if(listBtnCancelFriend.length > 0){
     });
 }
 //Chức năng từ chối kết bạn
-//Chức năng hủy gửi yêu cầu
 const listBtnRefuseFriend = document.querySelectorAll("[btn-refuse-friend]");
 if(listBtnRefuseFriend.length > 0){
     listBtnRefuseFriend.forEach(button => {
@@ -37,6 +36,21 @@ if(listBtnRefuseFriend.length > 0){
             const userId = button.getAttribute("btn-refuse-friend");
             
             socket.emit("CLIENT_REFUSE_FRIEND",userId);
+
+        });
+    });
+}
+
+//Chức năng chấp nhận kết bạn
+const listBtnAcceptFriend = document.querySelectorAll("[btn-accept-friend]");
+if(listBtnAcceptFriend.length > 0){
+    listBtnAcceptFriend.forEach(button => {
+        button.addEventListener("click", (e)=>{
+            button.closest(".box-user").classList.add("accepted");
+            
+            const userId = button.getAttribute("btn-accept-friend");
+            
+            socket.emit("CLIENT_ACCEPT_FRIEND",userId);
 
         });
     });

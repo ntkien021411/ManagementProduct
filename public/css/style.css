@@ -462,4 +462,18 @@ border-radius: 5px;
   display: inline-block;
 }
 
+
+.box-user [btn-accepted-friend]{
+  display: none;
+}
+.box-user.accepted [btn-accept-friend]{
+  display: none;
+}
+.box-user.accepted [btn-refuse-friend]{
+  display: none;
+}
+.box-user.accepted [btn-accepted-friend]{
+  display: inline-block;
+}
+
 /*End Box-User-Not-Friend */

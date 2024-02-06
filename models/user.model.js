@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     avatar : String,
     friendList:[ //Danh sách bạn bè của user và những box chat với bạn bè
     {
-      userId : String,
+      user_id : String,
       room_chat_id : String
     }
     ],
