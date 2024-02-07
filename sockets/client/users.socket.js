@@ -94,6 +94,18 @@ module.exports = async (res) => {
           }
         );
       }
+
+      //Lấy độ dài acceptFriends của B trả về cho B
+      const infoUserB = await User.findOne({
+        _id : userId
+      });
+      // console.log("check1");
+      const lengthAcceptFriend= infoUserB.acceptFriends.length;
+      //Khi thằng A gửi kết bạn thì sẽ gửi socket về cho tất trừ thằng A
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_ACCEPT_FRIEND', {
+        userId : userId,
+        lengthAcceptFriend : lengthAcceptFriend
+    });
     });
 
     //Người dùng từ chối kết bạn
