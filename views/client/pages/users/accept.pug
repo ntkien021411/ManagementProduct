@@ -9,7 +9,7 @@ block main
             .col-12
                 +box-head("Lời mời đã nhận")
 
-        .row 
+        .row(data-users-accept=user.id)
             each user in users
                 .col-6 
                     div(class="box-user")
@@ -31,7 +31,7 @@ block main
                                 ) Xóa
                                 button(
                                     class="btn btn-sm btn-secondary mr-1"
-                                     btn-deleted-friend=
+                                     btn-deleted-friend
                                      disabled
                                 ) Đã xóa
                                 button(

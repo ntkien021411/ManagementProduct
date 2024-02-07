@@ -44,15 +44,26 @@ module.exports = async (res) => {
       }
       //Lấy độ dài acceptFriends của B trả về cho B
       const infoUserB = await User.findOne({
-        _id : userId
+        _id: userId,
       });
       // console.log("check1");
-      const lengthAcceptFriend= infoUserB.acceptFriends.length;
+      const lengthAcceptFriend = infoUserB.acceptFriends.length;
       //Khi thằng A gửi kết bạn thì sẽ gửi socket về cho tất trừ thằng A
-      socket.broadcast.emit('SERVER_RETURN_LENGTH_ACCEPT_FRIEND', {
-        userId : userId,
-        lengthAcceptFriend : lengthAcceptFriend
-    });
+      socket.broadcast.emit("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", {
+        userId: userId,
+        lengthAcceptFriend: lengthAcceptFriend,
+      });
+
+      //Trả về thông tin của A để hiện ra trong danh sách lời mời kết bạn của B
+      const infoUserA = await User.findOne({
+        _id: myUserId,
+      }).select("id avatar  fullName ");
+      socket.broadcast.emit("SERVER_RETURN_INFO_ACCEPT_FRIEND", {
+        userId: userId,
+        infoUserA: infoUserA,
+      });
+
+
     });
 
     //Người dùng hủy gửi yêu cầu kết bạn
@@ -97,15 +108,15 @@ module.exports = async (res) => {
 
       //Lấy độ dài acceptFriends của B trả về cho B
       const infoUserB = await User.findOne({
-        _id : userId
+        _id: userId,
       });
       // console.log("check1");
-      const lengthAcceptFriend= infoUserB.acceptFriends.length;
+      const lengthAcceptFriend = infoUserB.acceptFriends.length;
       //Khi thằng A gửi kết bạn thì sẽ gửi socket về cho tất trừ thằng A
-      socket.broadcast.emit('SERVER_RETURN_LENGTH_ACCEPT_FRIEND', {
-        userId : userId,
-        lengthAcceptFriend : lengthAcceptFriend
-    });
+      socket.broadcast.emit("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", {
+        userId: userId,
+        lengthAcceptFriend: lengthAcceptFriend,
+      });
     });
 
     //Người dùng từ chối kết bạn
@@ -145,6 +156,8 @@ module.exports = async (res) => {
           }
         );
       }
+
+      
     });
 
     //Người dùng chấp nhận kết bạn
@@ -168,7 +181,7 @@ module.exports = async (res) => {
             $push: {
               friendList: {
                 user_id: userId,
-                room_chat_id : ""
+                room_chat_id: "",
               },
             },
             $pull: { acceptFriends: userId },
@@ -189,11 +202,11 @@ module.exports = async (res) => {
           },
           {
             $push: {
-                friendList: {
-                  user_id: myUserId,
-                  room_chat_id : ""
-                },
+              friendList: {
+                user_id: myUserId,
+                room_chat_id: "",
               },
+            },
             $pull: { requestFriends: myUserId },
           }
         );
