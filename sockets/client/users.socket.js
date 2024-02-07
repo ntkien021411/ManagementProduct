@@ -9,7 +9,7 @@ module.exports = async (res) => {
     socket.on("CLIENT_ADD_FRIEND", async (userId) => {
       //   console.log(myUserId); //A
       //   console.log(userId); //B
-
+      // console.log("check2");
       //Thêm ID của A vào acceptFriend của B
       //Kiểm tra xem A đã gửi yêu cầu kết bạn cho B chưa
       const existUserAInB = await User.findOne({
@@ -42,6 +42,17 @@ module.exports = async (res) => {
           }
         );
       }
+      //Lấy độ dài acceptFriends của B trả về cho B
+      const infoUserB = await User.findOne({
+        _id : userId
+      });
+      // console.log("check1");
+      const lengthAcceptFriend= infoUserB.acceptFriends.length;
+      //Khi thằng A gửi kết bạn thì sẽ gửi socket về cho tất trừ thằng A
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_ACCEPT_FRIEND', {
+        userId : userId,
+        lengthAcceptFriend : lengthAcceptFriend
+    });
     });
 
     //Người dùng hủy gửi yêu cầu kết bạn
