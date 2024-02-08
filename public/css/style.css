@@ -476,4 +476,14 @@ border-radius: 5px;
   display: inline-block;
 }
 
+.box-user [btn-rejected-friend]{
+  display: none;
+}
+.box-user.rejected [btn-reject-friend]{
+  display: none;
+}
+.box-user.rejected [btn-rejected-friend]{
+  display: inline-block;
+}
+
 /*End Box-User-Not-Friend */

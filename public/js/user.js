@@ -1,3 +1,17 @@
+//Chức năng hủy kết bạn sau khi đã kết bạn
+const listBtnRejectFriend = document.querySelectorAll("[btn-reject-friend]");
+if (listBtnRejectFriend.length > 0) {
+  listBtnRejectFriend.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      button.closest(".box-user").classList.add("rejected");
+
+      const userId = button.getAttribute("btn-reject-friend");
+
+      socket.emit("CLIENT_REJECT_FRIEND", userId);
+    });
+  });
+}
+
 // Chức năng gửi yêu cầu
 const listBtnAddFriend = document.querySelectorAll("[btn-add-friend]");
 if (listBtnAddFriend.length > 0) {
@@ -139,4 +153,19 @@ socket.on("SERVER_RETURN_USER_ID_CANCEL_FRIEND", (data) => {
         dataUsersAccept.removeChild(boxUserRemove);
       }
   }
+});
+
+//SERVER_RETURN_USER_ID_REJECT_FRIEND
+socket.on("SERVER_RETURN_USER_ID_REJECT_FRIEND", (data) => {
+  const dataUsersAccept = document.querySelector("[data-users-reject]");
+ const userId = dataUsersAccept.getAttribute("data-users-reject");
+ //Check xem có phải client của người dùng B ko
+ if (userId == data.userId) {
+     //Xóa A khỏi danh sách lời mời kết bạn của B
+   
+     const boxUserRemove =dataUsersAccept.querySelector(`[user-id="${data.userIdA}"]`); 
+     if(boxUserRemove){
+       dataUsersAccept.removeChild(boxUserRemove);
+     }
+ }
 });

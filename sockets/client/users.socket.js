@@ -62,7 +62,7 @@ module.exports = async (res) => {
         userId: userId,
         infoUserA: infoUserA,
       });
-      
+
 
 
     });
@@ -236,5 +236,52 @@ module.exports = async (res) => {
         lengthAcceptFriend: lengthAcceptFriend,
       });
     });
+
+    socket.on("CLIENT_REJECT_FRIEND", async (userId) => {
+      //   console.log(myUserId); //B
+      //   console.log(userId); //A
+
+      //Xóa ID của A trong acceptFriend của B
+      //Thêm{user_id,room_chat_id} của A vào friendList của B
+      const existUserAInB = await User.findOne({
+        _id: myUserId,
+        friendList: { $elemMatch: { user_id: userId }},
+      });
+      if (existUserAInB) {
+        // console.log(existUserAInB);
+        await User.updateOne(
+          {
+            _id: myUserId,
+          },
+          {
+            $pull: { friendList: {user_id :userId} },
+          }
+        );
+      }
+
+      //Xóa ID của B trong requestFriend của A
+      //Thêm{user_id,room_chat_id} của B vào friendList của A
+      const existUserBInA = await User.findOne({
+        _id: userId,
+        friendList:{ $elemMatch: { user_id: myUserId }},
+      });
+      if (existUserBInA) {
+        await User.updateOne(
+          {
+            _id: userId,
+          },
+          {
+            $pull: { friendList: {user_id :myUserId} },
+          }
+        );
+      }
+       //Lấy userId của A trả về cho ông B
+       socket.broadcast.emit("SERVER_RETURN_USER_ID_REJECT_FRIEND", {
+        userId: userId,
+        userIdA : myUserId
+      });
+      
+    });
+
   });
 };
