@@ -117,6 +117,12 @@ module.exports = async (res) => {
         userId: userId,
         lengthAcceptFriend: lengthAcceptFriend,
       });
+
+      //Lấy userId của A trả về cho ông B
+      socket.broadcast.emit("SERVER_RETURN_USER_ID_CANCEL_FRIEND", {
+        userId: userId,
+        userIdA : myUserId
+      });
     });
 
     //Người dùng từ chối kết bạn
@@ -156,7 +162,15 @@ module.exports = async (res) => {
           }
         );
       }
-
+      //B từ chối cx cập nhật lại lời mời kết bạn
+      const infoUserB = await User.findOne({
+        _id: myUserId,
+      });
+      const lengthAcceptFriend = infoUserB.acceptFriends.length;
+      socket.emit("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", {
+        userId: myUserId,
+        lengthAcceptFriend: lengthAcceptFriend,
+      });
       
     });
 
@@ -211,6 +225,15 @@ module.exports = async (res) => {
           }
         );
       }
+      //B Accept cx cập nhật lại lời mời kết bạn
+      const infoUserB = await User.findOne({
+        _id: myUserId,
+      });
+      const lengthAcceptFriend = infoUserB.acceptFriends.length;
+      socket.emit("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", {
+        userId: myUserId,
+        lengthAcceptFriend: lengthAcceptFriend,
+      });
     });
   });
 };

@@ -56,9 +56,9 @@ if (listBtnAcceptFriend.length > 0) {
 socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {
   const badgeUserAccept = document.querySelector("[badge-users-accept]");
   const userId = badgeUserAccept.getAttribute("badge-users-accept");
-  //   console.log(userId);
+    console.log(123);
   //   console.log(data.userId);
-
+  //Check xem có phải client của người dùng B ko
   if (userId == data.userId) {
     badgeUserAccept.innerHTML = data.lengthAcceptFriend;
   }
@@ -68,11 +68,12 @@ socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {
 socket.on("SERVER_RETURN_INFO_ACCEPT_FRIEND", (data) => {
   const dataUsersAccept = document.querySelector("[data-users-accept]");
   const userId = dataUsersAccept.getAttribute("data-users-accept");
-
+  //Check xem có phải client của người dùng B ko
   if (userId == data.userId) {
     //Vẽ user ra giao diện
     const newBoxUser = document.createElement("div");
     newBoxUser.classList.add("col-6");
+    newBoxUser.setAttribute("user-id",data.infoUserA._id);
     newBoxUser.innerHTML = `<div class="box-user">
       <div class="inner-avatar">
       <img src="${data.infoUserA.avatar}" alt="${data.infoUserA.fullName}">
@@ -99,5 +100,22 @@ socket.on("SERVER_RETURN_INFO_ACCEPT_FRIEND", (data) => {
       const userId = btnAcceptFriend.getAttribute("btn-accept-friend");
       socket.emit("CLIENT_ACCEPT_FRIEND", userId);
     });
+  }
+});
+
+
+
+//SERVER_RETURN_USER_ID_CANCEL_FRIEND
+socket.on("SERVER_RETURN_USER_ID_CANCEL_FRIEND", (data) => {
+   const dataUsersAccept = document.querySelector("[data-users-accept]");
+  const userId = dataUsersAccept.getAttribute("data-users-accept");
+  //Check xem có phải client của người dùng B ko
+  if (userId == data.userId) {
+      //Xóa A khỏi danh sách lời mời kết bạn của B
+    
+      const boxUserRemove =dataUsersAccept.querySelector(`[user-id="${data.userIdA}"]`); 
+      if(boxUserRemove){
+        dataUsersAccept.removeChild(boxUserRemove);
+      }
   }
 });
