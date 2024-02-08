@@ -237,6 +237,7 @@ module.exports = async (res) => {
       });
     });
 
+    //Người dùng hủy kết bạn
     socket.on("CLIENT_REJECT_FRIEND", async (userId) => {
       //   console.log(myUserId); //B
       //   console.log(userId); //A
@@ -282,6 +283,7 @@ module.exports = async (res) => {
       });
       
     });
+
 
   });
 };

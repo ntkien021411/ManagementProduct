@@ -67,6 +67,12 @@ module.exports.loginPatch = async (req, res) => {
     expires: new Date(Date.now() + expiresTime),
   });
 
+  await User.updateOne({
+    _id : user.id
+  },{
+    statusOnline : "online"
+  })
+
   await Cart.updateOne(
     {
       _id: req.cookies.cartId,
@@ -80,7 +86,12 @@ module.exports.loginPatch = async (req, res) => {
 };
 
 // [GET] /user/logout
-module.exports.logout = (req, res) => {
+module.exports.logout = async (req, res) => {
+  await User.updateOne({
+    _id : res.locals.user.id
+  },{
+    statusOnline : "offline"
+  })
   res.clearCookie("tokenUser");
   res.redirect(`/`);
 };

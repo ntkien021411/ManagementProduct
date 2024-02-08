@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     ],
     acceptFriends : Array, //Danh sách lời mời kết bạn gửi tới user
     requestFriends : Array, // Danh sách nhừng yêu cầu kết bạn gửi đi của user 
+    statusOnline: String,
     status:{
         type:String,
         default : "active"

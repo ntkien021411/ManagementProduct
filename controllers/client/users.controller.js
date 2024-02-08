@@ -80,16 +80,14 @@ module.exports.friends = async (req, res) => {
   const myUser = await User.findOne({
     _id: userId,
   });
-  let listFriendId = [];
-  for (const item of myUser.friendList) {
-    listFriendId.push(item.user_id);
-  }
+  let listFriendId = myUser.friendList.map(item => item.user_id);
+  
   //Lấy tất cả trừ những thằng mk gửi yêu cầu kết bạn
   const users = await User.find({
     _id: { $in: listFriendId },
     status: "active",
     deleted: false,
-  }).select("id avatar  fullName email");
+  }).select("id avatar  fullName email statusOnline");
   // console.log(users);
   res.render("client/pages/users/friends", {
     title: "Danh sách bạn bè",

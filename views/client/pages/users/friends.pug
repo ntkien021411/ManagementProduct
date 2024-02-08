@@ -21,13 +21,23 @@ block main
                         div(class="inner-info")
                             div(class="inner-name") #{user.fullName}
                             div(class="inner-name") #{user.email}
+                        div(
+                            class="inner-status mr-4"
+                            status=user.statusOnline
+                        ) 
+                            i(class="fa-solid fa-circle")
+                        div(class="inner-buttons")
+                            a(
+                                href="#"
+                                class="btn btn-sm btn-primary mr-1"
+                            ) Nhắn tin
                         div(class="inner-buttons")
                                 button(
                                     class="btn btn-sm btn-primary mr-1"
                                     btn-reject-friend=user.id
                                 ) Hủy kết bạn
                                 button(
-                                    class="btn btn-sm btn-primary mr-1"
+                                    class="btn btn-sm  btn-secondary mr-1"
                                      btn-rejected-friend
                                      disabled
                                 ) Đã hủy kết bạn
