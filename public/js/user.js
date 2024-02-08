@@ -56,7 +56,7 @@ if (listBtnAcceptFriend.length > 0) {
 socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {
   const badgeUserAccept = document.querySelector("[badge-users-accept]");
   const userId = badgeUserAccept.getAttribute("badge-users-accept");
-    console.log(123);
+    // console.log(123);
   //   console.log(data.userId);
   //Check xem có phải client của người dùng B ko
   if (userId == data.userId) {
@@ -66,41 +66,62 @@ socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {
 
 //SERVER_RETURN_INFO_ACCEPT_FRIEND
 socket.on("SERVER_RETURN_INFO_ACCEPT_FRIEND", (data) => {
+  //Trang lời mời kết bạn
   const dataUsersAccept = document.querySelector("[data-users-accept]");
-  const userId = dataUsersAccept.getAttribute("data-users-accept");
-  //Check xem có phải client của người dùng B ko
-  if (userId == data.userId) {
-    //Vẽ user ra giao diện
-    const newBoxUser = document.createElement("div");
-    newBoxUser.classList.add("col-6");
-    newBoxUser.setAttribute("user-id",data.infoUserA._id);
-    newBoxUser.innerHTML = `<div class="box-user">
-      <div class="inner-avatar">
-      <img src="${data.infoUserA.avatar}" alt="${data.infoUserA.fullName}">
-      </div>
-      <div class="inner-info">
-      <div class="inner-name">${data.infoUserA.fullName}</div>
-      <div class="inner-buttons">
-      <button class="btn btn-sm btn-primary mr-1" btn-accept-friend="${data.infoUserA._id}">Chấp nhận</button>
-      <button class="btn btn-sm btn-secondary mr-1" btn-refuse-friend="${data.infoUserA._id}">Xóa</button>
-      <button class="btn btn-sm btn-secondary mr-1"  btn-deleted-friend disabled>Đã xóa</button>
-      <button class="btn btn-sm btn-primary mr-1" btn-accepted-friend disabled=>Đã chấp nhận</button>
-      </div></div></div>`;
-    dataUsersAccept.appendChild(newBoxUser);
-    //Xóa lời mời kết bạn
-    const btnRefuseFriend = newBoxUser.querySelector("[btn-refuse-friend]");
-    btnRefuseFriend.addEventListener("click", (e) => {
-      btnRefuseFriend.closest(".box-user").classList.add("refuse");
-      const userId = btnRefuseFriend.getAttribute("btn-refuse-friend");
-      socket.emit("CLIENT_REFUSE_FRIEND", userId);
-    });
-    const btnAcceptFriend = newBoxUser.querySelector("[btn-accept-friend]");
-    btnAcceptFriend.addEventListener("click", (e) => {
-      btnAcceptFriend.closest(".box-user").classList.add("accepted");
-      const userId = btnAcceptFriend.getAttribute("btn-accept-friend");
-      socket.emit("CLIENT_ACCEPT_FRIEND", userId);
-    });
+  if(dataUsersAccept){
+    const userId = dataUsersAccept.getAttribute("data-users-accept");
+    //Check xem có phải client của người dùng B ko
+    if (userId == data.userId) {
+      //Vẽ user ra giao diện
+      const newBoxUser = document.createElement("div");
+      newBoxUser.classList.add("col-6");
+      newBoxUser.setAttribute("user-id",data.infoUserA._id);
+      newBoxUser.innerHTML = `<div class="box-user">
+        <div class="inner-avatar">
+        <img src="${data.infoUserA.avatar}" alt="${data.infoUserA.fullName}">
+        </div>
+        <div class="inner-info">
+        <div class="inner-name">${data.infoUserA.fullName}</div>
+        <div class="inner-buttons">
+        <button class="btn btn-sm btn-primary mr-1" btn-accept-friend="${data.infoUserA._id}">Chấp nhận</button>
+        <button class="btn btn-sm btn-secondary mr-1" btn-refuse-friend="${data.infoUserA._id}">Xóa</button>
+        <button class="btn btn-sm btn-secondary mr-1"  btn-deleted-friend disabled>Đã xóa</button>
+        <button class="btn btn-sm btn-primary mr-1" btn-accepted-friend disabled=>Đã chấp nhận</button>
+        </div></div></div>`;
+      dataUsersAccept.appendChild(newBoxUser);
+  
+  
+      //Xóa lời mời kết bạn
+      const btnRefuseFriend = newBoxUser.querySelector("[btn-refuse-friend]");
+      btnRefuseFriend.addEventListener("click", (e) => {
+        btnRefuseFriend.closest(".box-user").classList.add("refuse");
+        const userId = btnRefuseFriend.getAttribute("btn-refuse-friend");
+        socket.emit("CLIENT_REFUSE_FRIEND", userId);
+      });
+  
+      //Chấp nhận lời mời kết bạn
+      const btnAcceptFriend = newBoxUser.querySelector("[btn-accept-friend]");
+      btnAcceptFriend.addEventListener("click", (e) => {
+        btnAcceptFriend.closest(".box-user").classList.add("accepted");
+        const userId = btnAcceptFriend.getAttribute("btn-accept-friend");
+        socket.emit("CLIENT_ACCEPT_FRIEND", userId);
+      });
+    }
   }
+
+  //Trang danh sách người dùng
+  const dataUserNotFriend = document.querySelector("[data-users-not-friend]");
+  if(dataUserNotFriend){
+    const userId = dataUserNotFriend.getAttribute("data-users-not-friend");
+    if (userId == data.userId) {
+      const boxUserRemove =dataUserNotFriend.querySelector(`[user-id="${data.infoUserA._id}"]`); 
+      if(boxUserRemove){
+        dataUserNotFriend.removeChild(boxUserRemove);
+      }
+    }
+
+  }
+
 });
 
 
