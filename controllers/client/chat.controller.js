@@ -17,16 +17,27 @@ module.exports.index = async (req, res) => {
     _id : roomChatId,
     deleted:false
   });
+ 
+  // const userOwner = roomChat.users.find(item => item.user_id == res.locals.user.id);
   for (const chat of chats) {
       const infoUser = await User.findOne({
         _id : chat.user_id
       }).select("fullName");
       chat.infoUser = infoUser;
   }
+  // const friendList = res.locals.user.friendList;
+  // for (const item of friendList) {
+  //   const infoUser = await User.findOne({
+  //     _id: item.user_id,
+  //   }).select("id avatar  fullName ");
+  //   item.infoUser = infoUser;
+  // }
   // console.log(chats);
   res.render("client/pages/chat/index", {
     title: "Chat",
     chats : chats,
-    roomChat : roomChat
+    roomChat : roomChat,
+    // friendList: friendList,
+    // userOwner : userOwner,
   });
 };

@@ -5,12 +5,29 @@ block main
     .container.my-3
         include ../../partials/list-btn-users.pug 
 
+        if(roomChat.title)
+            h1 #{roomChat.title}
         .row
             .col-12
                 +box-head("Chat")
-        if(roomChat.title)
-            h1 #{roomChat.title}
-        
+        //- if(userOwner.role != "user")
+        //-     .row 
+        //-         .col-12 
+        //-             div(class="form-group")
+        //-                     label Thêm thành viên
+        //-                     each item in friendList
+        //-                         div(class="form-check")
+        //-                             input(
+        //-                                 class="form-check-input"
+        //-                                 type="checkbox"
+        //-                                 value=item.user_id
+        //-                                 id=`user-${item.user_id}`
+        //-                                 name="usersId"
+        //-                             )
+        //-                             label(
+        //-                                 class="form-check-label"
+        //-                                 for=`user-${item.user_id}`
+        //-                             ) #{item.infoUser.fullName}
         .row 
             .col-12 
                 .chat(my-id=user.id)
