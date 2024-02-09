@@ -157,15 +157,38 @@ socket.on("SERVER_RETURN_USER_ID_CANCEL_FRIEND", (data) => {
 
 //SERVER_RETURN_USER_ID_REJECT_FRIEND
 socket.on("SERVER_RETURN_USER_ID_REJECT_FRIEND", (data) => {
-  const dataUsersAccept = document.querySelector("[data-users-reject]");
- const userId = dataUsersAccept.getAttribute("data-users-reject");
+  const dataUsersReject = document.querySelector("[data-users-friend]");
+ const userId = dataUsersReject.getAttribute("data-users-friend");
  //Check xem có phải client của người dùng B ko
  if (userId == data.userId) {
      //Xóa A khỏi danh sách lời mời kết bạn của B
    
-     const boxUserRemove =dataUsersAccept.querySelector(`[user-id="${data.userIdA}"]`); 
+     const boxUserRemove =dataUsersReject.querySelector(`[user-id="${data.userIdA}"]`); 
      if(boxUserRemove){
-       dataUsersAccept.removeChild(boxUserRemove);
+      dataUsersReject.removeChild(boxUserRemove);
      }
  }
 });
+
+
+//SERVER_RETURN_USER_ONLINE
+socket.on("SERVER_RETURN_USER_ONLINE", (userId) => {
+  const dataUsersFriend = document.querySelector("[data-users-friend]");
+  if (dataUsersFriend) {
+      const boxUserRemove =dataUsersFriend.querySelector(`[user-id="${userId}"]`); 
+      if(boxUserRemove){
+        boxUserRemove.querySelector("[status]").setAttribute("status","online");
+      }
+  }
+});
+//SERVER_RETURN_USER_OFFLINE
+socket.on("SERVER_RETURN_USER_OFFLINE", (userId) => {
+  const dataUsersFriend = document.querySelector("[data-users-friend]");
+  if (dataUsersFriend) {
+      const boxUserRemove =dataUsersFriend.querySelector(`[user-id="${userId}"]`); 
+      if(boxUserRemove){
+        boxUserRemove.querySelector("[status]").setAttribute("status","offline");
+      }
+  }
+});
+
