@@ -23,6 +23,7 @@ module.exports.notFriend = async (req, res) => {
     status: "active",
     deleted: false,
   }).select("avatar  fullName ");
+  
   res.render("client/pages/users/not-friend", {
     title: "Danh sách người dùng",
     users: users,

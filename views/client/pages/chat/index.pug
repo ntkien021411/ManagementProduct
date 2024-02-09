@@ -8,7 +8,9 @@ block main
         .row
             .col-12
                 +box-head("Chat")
-
+        if(roomChat.title)
+            h1 #{roomChat.title}
+        
         .row 
             .col-12 
                 .chat(my-id=user.id)

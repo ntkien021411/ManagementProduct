@@ -1,26 +1,55 @@
-const Chat = require("../../models/chat.model");
 const User = require("../../models/user.model");
-const upload =require("../../helpers/uploadToCloudinary");
+const upload = require("../../helpers/uploadToCloudinary");
+const RoomChat = require("../../models/room-chat.model");
 
-const chatSocket =require("../../sockets/client/chat.socket");
 // [GET] /rooms-chat/
 module.exports.index = async (req, res) => {
-//   const roomChatId = req.params.roomChatId;
-
-//   chatSocket(req,res);
-//   //Lấy ra data chat
-//   const chats = await Chat.find({
-//     room_chat_id : roomChatId,
-//     deleted:false
-//   });
-//   for (const chat of chats) {
-//       const infoUser = await User.findOne({
-//         _id : chat.user_id
-//       }).select("fullName");
-//       chat.infoUser = infoUser;
-//   }
-  // console.log(chats);
   res.render("client/pages/rooms-chat/index", {
     title: "Danh sách phòng",
   });
 };
+
+// [GET] /rooms-chat/create
+module.exports.create = async (req, res) => {
+  const friendList = res.locals.user.friendList;
+  for (const item of friendList) {
+    const infoUser =await User.findOne({
+        _id:item.user_id
+     }).select("id avatar  fullName ");
+     item.infoUser =infoUser;
+  }
+ 
+ 
+
+  res.render("client/pages/rooms-chat/create", {
+    title: "Tạo phòng",
+    friendList:friendList
+  });
+};
+
+// [POST] /rooms-chat/create
+module.exports.createPost = async (req, res) => {
+    const title= req.body.title;
+    const usersId = req.body.usersId;
+    
+    const dataChat = {
+        title:title,
+        avatar:"",
+        typeRoom:"group",
+        users:[],
+    };
+    dataChat.users.push({
+        user_id : res.locals.user.id,
+        role : "superAdmin"
+    });
+    usersId.forEach(item => {
+        dataChat.users.push({
+            user_id : item,
+            role : "user"
+        });
+    });
+    const roomChat = new RoomChat(dataChat);
+    await roomChat.save();
+    res.redirect(`/chat/${roomChat.id}`);
+};
+  

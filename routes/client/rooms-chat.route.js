@@ -7,6 +7,9 @@ const chatMiddleware = require("../../middlewares/client/chat.middleware");
 
 router.get("/",controller.index);
 
+router.get("/create",controller.create);
+
+router.post("/create",controller.createPost);
 // router.post("/add/:productId",controller.add);
 
 // //Xóa hoặc update CART ko cần thiết phải đúng http
