@@ -1,4 +1,5 @@
 const User = require("../../models/user.model");
+const RoomChat = require("../../models/room-chat.model");
 
 module.exports = async (res) => {
   const myUserId = res.locals.user.id;
@@ -62,9 +63,6 @@ module.exports = async (res) => {
         userId: userId,
         infoUserA: infoUserA,
       });
-
-
-
     });
 
     //Người dùng hủy gửi yêu cầu kết bạn
@@ -122,7 +120,7 @@ module.exports = async (res) => {
       //Lấy userId của A trả về cho ông B
       socket.broadcast.emit("SERVER_RETURN_USER_ID_CANCEL_FRIEND", {
         userId: userId,
-        userIdA : myUserId
+        userIdA: myUserId,
       });
     });
 
@@ -172,7 +170,6 @@ module.exports = async (res) => {
         userId: myUserId,
         lengthAcceptFriend: lengthAcceptFriend,
       });
-      
     });
 
     //Người dùng chấp nhận kết bạn
@@ -181,12 +178,36 @@ module.exports = async (res) => {
       //   console.log(myUserId); //B
       //   console.log(userId); //A
 
-      //Xóa ID của A trong acceptFriend của B
-      //Thêm{user_id,room_chat_id} của A vào friendList của B
       const existUserAInB = await User.findOne({
         _id: myUserId,
         acceptFriends: userId,
       });
+      const existUserBInA = await User.findOne({
+        _id: userId,
+        requestFriends: myUserId,
+      });
+      let roomChat;
+      //Khi kết bạn sẽ tạo ra 1 phòng chat
+      if (existUserAInB && existUserBInA) {
+        roomChat = new RoomChat({
+          typeRoom: "friend",
+          users: [
+            {
+              user_id: userId,
+              role: "superAdmin",
+            },
+            {
+              user_id: myUserId,
+              role: "superAdmin",
+            }
+          ],
+        });
+        await roomChat.save();
+      }
+
+      //Xóa ID của A trong acceptFriend của B
+      //Thêm{user_id,room_chat_id} của A vào friendList của B
+
       if (existUserAInB) {
         await User.updateOne(
           {
@@ -196,7 +217,7 @@ module.exports = async (res) => {
             $push: {
               friendList: {
                 user_id: userId,
-                room_chat_id: "",
+                room_chat_id: roomChat.id,
               },
             },
             $pull: { acceptFriends: userId },
@@ -206,10 +227,7 @@ module.exports = async (res) => {
 
       //Xóa ID của B trong requestFriend của A
       //Thêm{user_id,room_chat_id} của B vào friendList của A
-      const existUserBInA = await User.findOne({
-        _id: userId,
-        requestFriends: myUserId,
-      });
+
       if (existUserBInA) {
         await User.updateOne(
           {
@@ -219,7 +237,7 @@ module.exports = async (res) => {
             $push: {
               friendList: {
                 user_id: myUserId,
-                room_chat_id: "",
+                room_chat_id:roomChat.id,
               },
             },
             $pull: { requestFriends: myUserId },
@@ -246,7 +264,7 @@ module.exports = async (res) => {
       //Thêm{user_id,room_chat_id} của A vào friendList của B
       const existUserAInB = await User.findOne({
         _id: myUserId,
-        friendList: { $elemMatch: { user_id: userId }},
+        friendList: { $elemMatch: { user_id: userId } },
       });
       if (existUserAInB) {
         // console.log(existUserAInB);
@@ -255,7 +273,7 @@ module.exports = async (res) => {
             _id: myUserId,
           },
           {
-            $pull: { friendList: {user_id :userId} },
+            $pull: { friendList: { user_id: userId } },
           }
         );
       }
@@ -264,7 +282,7 @@ module.exports = async (res) => {
       //Thêm{user_id,room_chat_id} của B vào friendList của A
       const existUserBInA = await User.findOne({
         _id: userId,
-        friendList:{ $elemMatch: { user_id: myUserId }},
+        friendList: { $elemMatch: { user_id: myUserId } },
       });
       if (existUserBInA) {
         await User.updateOne(
@@ -272,18 +290,15 @@ module.exports = async (res) => {
             _id: userId,
           },
           {
-            $pull: { friendList: {user_id :myUserId} },
+            $pull: { friendList: { user_id: myUserId } },
           }
         );
       }
-       //Lấy userId của A trả về cho ông B
-       socket.broadcast.emit("SERVER_RETURN_USER_ID_REJECT_FRIEND", {
+      //Lấy userId của A trả về cho ông B
+      socket.broadcast.emit("SERVER_RETURN_USER_ID_REJECT_FRIEND", {
         userId: userId,
-        userIdA : myUserId
+        userIdA: myUserId,
       });
-      
     });
-
-
   });
 };

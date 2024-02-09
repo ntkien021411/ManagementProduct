@@ -158,7 +158,8 @@ socket.on("SERVER_RETURN_USER_ID_CANCEL_FRIEND", (data) => {
 //SERVER_RETURN_USER_ID_REJECT_FRIEND
 socket.on("SERVER_RETURN_USER_ID_REJECT_FRIEND", (data) => {
   const dataUsersReject = document.querySelector("[data-users-friend]");
- const userId = dataUsersReject.getAttribute("data-users-friend");
+ if(dataUsersReject){
+  const userId = dataUsersReject.getAttribute("data-users-friend");
  //Check xem có phải client của người dùng B ko
  if (userId == data.userId) {
      //Xóa A khỏi danh sách lời mời kết bạn của B
@@ -167,6 +168,7 @@ socket.on("SERVER_RETURN_USER_ID_REJECT_FRIEND", (data) => {
      if(boxUserRemove){
       dataUsersReject.removeChild(boxUserRemove);
      }
+ }
  }
 });
 
