@@ -1,0 +1,30 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+block main
+
+    .container.my-3
+        .row
+            .col-12
+                +box-head("Danh sách phòng")
+
+        .row.mb-3 
+            .col-6 
+                a(
+                    href="/rooms-chat/create"
+                    class="btn btn-sm  btn-success mr-1"
+                ) Tạo phòng chat
+        .row 
+            .col-6 
+                div(class="box-room")
+                    div(class="inner-avatar")
+                        img(
+                            src="https://vcdn1-dulich.vnecdn.net/2021/07/16/1-1626437591.jpg?w=460&h=0&q=100&dpr=2&fit=crop&s=i2M2IgCcw574LT-bXFY92g"
+                            alt="sadas"
+                        )
+                    div(class="inner-info")
+                        div(class="inner-name") Phòng abc 
+                        div(class="inner-buttons")
+                            a(
+                                href="#"
+                                class="btn btn-sm btn-primary mr-1"
+                            ) Nhắn tin
