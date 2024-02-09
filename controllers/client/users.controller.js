@@ -10,6 +10,7 @@ module.exports.notFriend = async (req, res) => {
   });
   const requestFriends = myUser.requestFriends;
   const acceptFriends = myUser.acceptFriends;
+  let listFriendId = myUser.friendList.map(item => item.user_id);
   //Lấy tất cả trừ những thằng mk gửi yêu cầu kết bạn
   // và những thằng gửi yêu cầu kết bạn cho mk
   const users = await User.find({
@@ -17,6 +18,7 @@ module.exports.notFriend = async (req, res) => {
       { _id: { $ne: userId } },
       { _id: { $nin: requestFriends } },
       { _id: { $nin: acceptFriends } },
+      { _id: { $nin: listFriendId } },
     ],
     status: "active",
     deleted: false,
