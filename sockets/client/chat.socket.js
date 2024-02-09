@@ -19,7 +19,7 @@ module.exports =async (res) =>{
         //Lưu vào database
       const chat = new Chat(
           {
-            user_id: userId,
+          user_id: userId,
           content: data.content,
           images : images
           }
