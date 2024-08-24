@@ -5,9 +5,16 @@ const RoomChat = require("../../models/room-chat.model");
 // [GET] /rooms-chat/
 module.exports.index = async (req, res) => {
   const userId = res.locals.user.id;
+  //Tìm ra tất cả phòng chat kế cả friend hay group
   const roomChat = await RoomChat.find({
     users: { $elemMatch: { user_id: userId } },
   });
+  // Tìm ra phognf chat group 
+  // const roomChat = await RoomChat.find({
+  //   "users.user_id" :userId,
+  //   deleted : false,
+  //   typeRoom :"group"
+  // });
   res.render("client/pages/rooms-chat/index", {
     title: "Danh sách phòng",
     roomChat : roomChat,
